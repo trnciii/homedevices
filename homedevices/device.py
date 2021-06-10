@@ -101,55 +101,62 @@ class DIYLight(Device):
     
     state = ["off", "on", "night"]
     
+    cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
+    cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
+    cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
+    cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
+
     def __init__(self, home, deviceId, name):
         deviceType = "DIY Light"
         isRemote = True
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
         self.cState = 0
-        self.cBrightness = 3
-
         self.nState = self.cState + 1
-        self.nBrightness = 3
 
         self.setAbsoluteBrightness = False
 
     def __str__(self):
         s = super().__str__()
         s = s + " { state: " + DIYLight.state[self.cState] + ", "
-        s = s + "brightness: " + str(self.cBrightness) + ", "
         s = s + "absolute brightness flag: " + str(self.setAbsoluteBrightness)
         s = s + " }"
         return s
 
-    def creteCommands(self): # mode only
-        cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
-        cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
-        cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
-        itr = (self.nState - self.cState)%3
-        cMode = [cmd_on]*itr
+    def mode(self, state):
+        n = 0
 
-        if DIYLight.state[self.nState] != "on":return cMode
+        if isinstance(state, str) and state in DIYLight.state:
+            n = DIYLight.state.index(state) - self.cState
 
-        cBrt = []
-        diffB = self.nBrightness-self.cBrightness
+        if isinstance(state, int):
+            n = state%3
 
-        if self.setAbsoluteBrightness:
-            cBrt = [cmd_down]*10 + [cmd_up]*self.nBrightness
-        elif diffB>0:
-            cBrt = [cmd_up]*diffB
-        else:
-            cBrt = [cmd_down]*(-diffB)
-
-        return cMode + cBrt
+        if n == 1:
+            return self.run([DIYLight.cmd_on])
+        if n == 2:
+            return self.run([DIYLight.cmd_off])
+        return []
 
 
-    def set(self):
+    def brightness(self, n, absolute=False):
+        cmd = []
+
+        if absolute:
+            cmd = [DIYLight.cmd_down]*10 + [DIYLight.cmd_up]*self.nBrightness
+        elif n>0:
+            cmd = [DIYLight.cmd_up]*n
+        elif n<0:
+            cmd = [DIYLight.cmd_down]*(-n)
+
+        self.run(cmd)
+
+
+    def run(self, commands):
         res = []
-        for c in self.creteCommands():
+        for c in commands:
             res.append(self.post(c))
-
         return res
 
 

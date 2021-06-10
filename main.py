@@ -6,10 +6,11 @@ def main():
     home = Home()
     home.listDevices()
 
-    # home.devices["AC"].powerState = "off"
+    # home.devices["AC"].powerState = "on"
+    # home.devices["AC"].temperture = 27
     # home.devices["AC"].set()
 
-    # home.devices["Fan"].power()
+    home.devices["Fan"].power()
     # home.devices["Fan"].power(False)
 
 
