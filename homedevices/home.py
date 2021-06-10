@@ -1,5 +1,6 @@
 import json
 import urllib.request
+import os
 from .device import *
 
 
@@ -12,44 +13,59 @@ def request(url, headers, data=None):
     except urllib.error.URLError as e:
         print(e)
 
+def write(path, string):
+    path = os.path.abspath(path)
+    try:
+        open(path, "w").write(string)
+        print("saved", path)
+    except:
+        print("failed to save", path)
+
 
 class Home:
 
     def __init__(self):
+
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        if not os.path.exists("./data/"):
+            os.mkdir("./data/")
+
         self.File_autho = "./data/autho"
         self.File_devices = "./data/devices.json"
 
+        self.autho = ""
+        self.setAutho()
+
         self.devices = {}
+        self.loadDevices()
+
+
+    # autho token
+    def setAutho(self, string=None):
+        if string:
+            self.autho = string
+            write(self.File_autho, self.autho)
+            return
 
         try:
             with open(self.File_autho, "r") as f:
                 self.autho = f.readline().replace("\n", "")
         except:
-            print("failed to read token")
-
-        try:
-            with open(self.File_devices, "r") as f:
-                print("using local device list")
-                devices_raw = json.load(f)
-        except:
-            print("fetching device list")
-            res = self.fetchDevices()
-
-            if res["message"] == "success":
-                devices_raw = res["body"]
-                with open(self.File_devices, 'w') as f:
-                    json.dump(devices_raw, f, indent=4)
-                    print('saved device list as', self.File_devices)
-                    print()
-            else:
-                print("failed to get device list")
-                devices_raw = None
-
-        if devices_raw:
-            self.createDevices(devices_raw)
+            self.autho = input("enter an authorization token: ")
+            write(self.File_autho, self.autho)
 
 
-    def createDevices(self, src):
+    def removeAutho(self):
+        os.remove(self.File_autho)
+        print("removed", os.path.abspath(self.File_autho))
+
+
+    # devices
+    def loadDevices(self):
+        src = self.fetchDeviceList()
+
+        if not src: return
+
         for s in src["deviceList"]:
             deviceType = s["deviceType"].replace(" ", "")
             device = eval(deviceType)(self, s["deviceId"], s["deviceName"])
@@ -58,21 +74,36 @@ class Home:
         for s in src["infraredRemoteList"]:
             deviceType = s["remoteType"].replace(" ", "")
             device = eval(deviceType)(self, s["deviceId"], s["deviceName"])
-            self.devices[s["deviceName"]] = (device)
+            self.devices[s["deviceName"]] = device
+            
+
+    def fetchDeviceList(self):
+        try:
+            with open(self.File_devices, "r") as f:
+                print("using local device list")
+                return json.load(f)
+        except:
+            print("fetchig device list")
+
+            url = 'https://api.switch-bot.com/v1.0/devices'
+            headers = {'Authorization' : self.autho}
+            res = request(url, headers)
+
+            if res["message"] == "success":
+                deviceList = res["body"]
+                write(self.File_devices, json.dumps(deviceList, indent=4))
+                return deviceList
+            else:
+                print("failed to get device list")
+                return None
 
 
-    def listDevices(self):
-        for d in self.devices.values():
-            print("-", d)
-        print()
+    def removeDeviceList(self):
+        os.remove(self.File_devices)
+        print("removed", os.path.abspath(self.File_devices))
 
 
-    def fetchDevices(self):
-        url = 'https://api.switch-bot.com/v1.0/devices'
-        headers = {'Authorization' : self.autho}
-        return request(url, headers)
-
-
+    # actions
     def fetchStatus(self, deviceId):
         url = 'https://api.switch-bot.com/v1.0/devices/'+deviceId+'/status'
         headers = {'Authorization' : self.autho}
