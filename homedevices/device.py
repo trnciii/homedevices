@@ -92,8 +92,8 @@ class Plug(Device):
 
     def sync(self):
         st = self.fetchStatus()
-        if st["message"] == "success":
-            self.powerState = st["body"]["power"] == "on"
+        if st:
+            self.powerState = st["power"] == "on"
         return st
 
 

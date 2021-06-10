@@ -9,7 +9,11 @@ def request(url, headers, data=None):
     try:
         with urllib.request.urlopen(req) as response:
             body = json.loads(response.read())
-            return body
+            if body["message"] == "success":
+                return body["body"] if body["body"] else True
+            else:
+                print(body["message"])
+
     except urllib.error.URLError as e:
         print(e)
 
@@ -87,15 +91,11 @@ class Home:
 
             url = 'https://api.switch-bot.com/v1.0/devices'
             headers = {'Authorization' : self.autho}
-            res = request(url, headers)
 
-            if res["message"] == "success":
-                deviceList = res["body"]
+            deviceList = request(url, headers)            
+            if deviceList:
                 write(self.File_devices, json.dumps(deviceList, indent=4))
                 return deviceList
-            else:
-                print("failed to get device list")
-                return None
 
 
     def removeDeviceList(self):
