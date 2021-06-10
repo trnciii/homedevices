@@ -99,7 +99,7 @@ class Plug(Device):
 
 class DIYLight(Device):
     
-    state = ["off", "on", "night"]
+    __stateNames__ = ["off", "on", "night"]
     
     cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
     cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
@@ -111,52 +111,44 @@ class DIYLight(Device):
         isRemote = True
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
-        self.cState = 0
-        self.nState = self.cState + 1
+        self.state = 1
 
-        self.setAbsoluteBrightness = False
 
     def __str__(self):
         s = super().__str__()
-        s = s + " { state: " + DIYLight.state[self.cState] + ", "
-        s = s + "absolute brightness flag: " + str(self.setAbsoluteBrightness)
-        s = s + " }"
+        s = s + " { state: " + DIYLight.__stateNames__[self.state] + " }"
         return s
 
 
-    def mode(self, state):
+    def mode(self, next):
         n = 0
 
-        if isinstance(state, str) and state in DIYLight.state:
-            n = DIYLight.state.index(state) - self.cState
+        if isinstance(next, str) and next in DIYLight.__stateNames__:
+            n = DIYLight.__stateNames__.index(next) - self.state
+            n = n%3
+        elif isinstance(next, int):
+            n = next%3
 
-        if isinstance(state, int):
-            n = state%3
-
-        if n == 1:
-            return self.run([DIYLight.cmd_on])
-        if n == 2:
-            return self.run([DIYLight.cmd_off])
-        return []
+        if n == 1 and self.post(DIYLight.cmd_on):
+            self.state = (self.state + n)%3
+        elif n == 2 and self.post(DIYLight.cmd_off):
+            self.state = (self.state + n)%3
 
 
     def brightness(self, n, absolute=False):
         cmd = []
 
         if absolute:
-            cmd = [DIYLight.cmd_down]*10 + [DIYLight.cmd_up]*self.nBrightness
+            cmd = [DIYLight.cmd_down]*10 + [DIYLight.cmd_up]*n
         elif n>0:
             cmd = [DIYLight.cmd_up]*n
         elif n<0:
             cmd = [DIYLight.cmd_down]*(-n)
 
-        self.run(cmd)
-
-
-    def run(self, commands):
         res = []
-        for c in commands:
+        for c in cmd:
             res.append(self.post(c))
+
         return res
 
 

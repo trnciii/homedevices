@@ -10,24 +10,12 @@ def main():
     # home.devices["AC"].set()
     # home.devices["AC"].off()
 
-    home.devices["Fan"].power()
+    # home.devices["Fan"].power()
     # home.devices["Fan"].power(False)
 
-
-    # print(home.devices["Light"])
-
-    # l = home.devices["Light"]
-    
-    # l.cState = 1
-    # l.nState = 1
-
-    # l.cBrightness = 2
-    # l.nBrightness = 0
-    # l.setAbsoluteBrightness = False
-
-    # l.set()
-
-    # print(l)
-    # print(home.devices["Light"])
+    l = home.devices["Light"]
+    l.state = 1
+    l.mode("night")
+    print(l.brightness(2, True))
 
 main()
