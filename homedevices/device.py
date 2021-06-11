@@ -1,6 +1,10 @@
 from functools import partial
 
 class Device:
+
+    cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
+    cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
+
     def __init__(self, home, deviceId, name, deviceType, isRemote):
         self.id = deviceId
         self.name = name
@@ -17,6 +21,12 @@ class Device:
             s = s + "(remote)"
 
         return s
+
+    def on(self):
+        return self.post(Device.cmd_on)
+
+    def off(self):
+        return self.post(Device.cmd_off)
 
 
 
@@ -81,12 +91,7 @@ class Plug(Device):
         else:
             self.powerState = mode
 
-        cmd = {
-            "command":"turnOn" if self.powerState else "turnOff",
-            "parameter":"default",
-            "commandType":"command"
-        }
-
+        cmd = Device.cmd_on if self.powerState else Device.cmd_off
         return self.post(cmd)
 
 
@@ -98,11 +103,10 @@ class Plug(Device):
 
 
 class DIYLight(Device):
-    
+    # for my room's only
+
     __stateNames__ = ["off", "on", "night"]
     
-    cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
-    cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
     cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
     cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
