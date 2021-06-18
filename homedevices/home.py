@@ -44,6 +44,14 @@ class Home:
         self.loadDevices()
 
 
+    def __str__(self):
+        s = "---- devices ----\n"
+        for d in self.devices:
+            s += d + "\n"
+        s += "---- ------- ----\n"
+        return s
+
+
     # autho token
     def setAutho(self, string=None):
         if string:
