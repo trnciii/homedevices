@@ -76,29 +76,40 @@ class Plug(Device):
         isRemote = False
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
-        self.powerState = False
+        self.power = "off"
         self.sync()
 
 
     def __str__(self):
         s = super().__str__()
-        return s + " { power: " + ("on" if self.powerState else "off") + " }"
+        return s + " { power: " + self.power + " }"
 
 
-    def power(self, mode=None):
-        if mode is None:
-            self.powerState = not self.powerState
-        else:
-            self.powerState = mode
+    def on(self):
+        if super().on():
+            self.power = "on"
 
-        cmd = Device.cmd_on if self.powerState else Device.cmd_off
-        return self.post(cmd)
+
+    def off(self):
+        if super().off():
+            self.power = "off"
+
+
+    def toggle(self):
+        self.sync()
+
+        if self.power == "on":
+            print("off")
+            return self.off()
+        elif self.power == "off":
+            print("on")
+            return self.on()
 
 
     def sync(self):
         st = self.fetchStatus()
         if st:
-            self.powerState = st["power"] == "on"
+            self.power = st["power"]
         return st
 
 
