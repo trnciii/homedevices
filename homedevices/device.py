@@ -128,6 +128,10 @@ class DIYLight(Device):
 
         self.state = 1
 
+        self.on = partial(self.mode, next="on")
+        self.off = partial(self.mode, next="off")
+        self.night = partial(self.mode, next="night")
+
 
     def __str__(self):
         s = super().__str__()
