@@ -1,6 +1,9 @@
 import json
 import urllib.request
 import os
+import time
+import threading
+
 from .device import *
 
 
@@ -125,3 +128,14 @@ class Home:
             'Authorization' : self.autho,
         }
         return request(url, headers, data)
+
+
+    # util
+    def delay(self, t, f, *args):
+        
+        def ex():
+            time.sleep(60*t)
+            print(f(*args))
+
+        th = threading.Thread(target=ex)
+        th.start()
