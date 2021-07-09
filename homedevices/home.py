@@ -1,10 +1,9 @@
 import json
 import urllib.request
 import os
-import time
-import threading
 
 from .device import *
+from .util import *
 
 
 def request(url, headers, data=None):
@@ -20,31 +19,33 @@ def request(url, headers, data=None):
     except urllib.error.URLError as e:
         print(e)
 
-def write(path, string):
-    path = os.path.abspath(path)
+
+def write(file, string):
     try:
-        open(path, "w").write(string)
-        print("saved", path)
+        open(file, "w").write(string)
+        print("saved", file)
     except:
-        print("failed to save", path)
+        print("failed to save", file)
+
 
 
 class Home:
 
     def __init__(self):
 
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        if not os.path.exists("./data/"):
-            os.mkdir("./data/")
-
-        self.File_autho = "./data/autho"
-        self.File_devices = "./data/devices.json"
+        if not os.path.exists(path_data):
+            os.mkdir(path_data)
 
         self.autho = ""
         self.setAutho()
 
         self.devices = {}
         self.loadDevices()
+
+        self.removeAutho = removeAutho
+        self.removeDeviceList = removeDeviceList
+
+        print(self)
 
 
     def __str__(self):
@@ -59,20 +60,15 @@ class Home:
     def setAutho(self, string=None):
         if string:
             self.autho = string
-            write(self.File_autho, self.autho)
+            write(path_autho, self.autho)
             return
 
         try:
-            with open(self.File_autho, "r") as f:
+            with open(path_autho, "r") as f:
                 self.autho = f.readline().replace("\n", "")
         except:
             self.autho = input("enter an authorization token: ")
-            write(self.File_autho, self.autho)
-
-
-    def removeAutho(self):
-        os.remove(self.File_autho)
-        print("removed", os.path.abspath(self.File_autho))
+            write(path_autho, self.autho)
 
 
     # devices
@@ -94,7 +90,7 @@ class Home:
 
     def fetchDeviceList(self):
         try:
-            with open(self.File_devices, "r") as f:
+            with open(path_devices, "r") as f:
                 print("using local device list")
                 return json.load(f)
         except:
@@ -103,15 +99,10 @@ class Home:
             url = 'https://api.switch-bot.com/v1.0/devices'
             headers = {'Authorization' : self.autho}
 
-            deviceList = request(url, headers)            
+            deviceList = request(url, headers)
             if deviceList:
-                write(self.File_devices, json.dumps(deviceList, indent=4))
+                write(path_devices, json.dumps(deviceList, indent=4))
                 return deviceList
-
-
-    def removeDeviceList(self):
-        os.remove(self.File_devices)
-        print("removed", os.path.abspath(self.File_devices))
 
 
     # actions
@@ -128,14 +119,3 @@ class Home:
             'Authorization' : self.autho,
         }
         return request(url, headers, data)
-
-
-    # util
-    def delay(self, t, f, *args):
-        
-        def ex():
-            time.sleep(60*t)
-            print(f(*args))
-
-        th = threading.Thread(target=ex)
-        th.start()
