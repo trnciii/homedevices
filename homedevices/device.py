@@ -180,3 +180,6 @@ class HubMini(Device):
 
     def __str__(self):
         return self.type
+
+    def off():pass
+    def on():pass
