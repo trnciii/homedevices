@@ -1,5 +1,25 @@
 from functools import partial
 
+def toOptions(ls):
+    s = "[ "
+    for i in range(len(ls)):
+        s += str(i) + " " + str(ls[i])
+        if i < len(ls)-1:
+            s += " | "
+
+    return s + " ]"
+
+def setOption(v, ls):
+    if v in ls:
+        return ls.index(v)
+
+    if isinstance(v, int) and 0<=v and v<len(ls):
+        return v
+
+    v = input("choose option " + toOptions(ls) + " >>")
+    return setOption(int(v) if v.isdigit() else v, ls)
+
+
 class Device:
 
     cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
@@ -31,42 +51,63 @@ class Device:
 
 
 class AirConditioner(Device):
+    
+    modeNames = ["auto", "cool", "dry", "fan", "heat"]
+    fanSpeedNames = ["auto", "low", "medium", "high"]
+
     def __init__(self, home, deviceId, name):
         deviceType = "Air Conditioner"
         isRemote = True
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
-        # 25,2,1,off
-        # temperature, mode(cool), fan speed(auto), power
         self.temperature = 25
-        self.mode = 2
-        self.fan = 1
-        self.powerState = "off"
+        self.mode = "cool"
+        self.fan = "auto"
 
     def __str__(self):
-        s = super().__str__()
+        return super().__str__() + "{ " + self.status() + " }"
 
-        modes = ["auto", "cool", "dry", "fan"]
-        fan = ["auto", "low", "medium", "high"]
-
-        s = s + " { "
-        s = s + "power : " + self.powerState + ", "
-        s = s + "temperature : " + str(self.temperature) + ", "
-        s = s + "mode : " + modes[self.mode-1] + ", "
-        s = s + "fan : " + fan[self.fan-1] + " }"
-
+    def status(self):
+        s = "{ "
+        s = s + "temperature: " + str(self.temperature) + ", "
+        s = s + "mode: " + self.mode + ", "
+        s = s + "fan: " + self.fan + " }"
         return s
 
 
+    @property
+    def mode(self):
+        return AirConditioner.modeNames[self._mode]
+    
+    @mode.setter
+    def mode(self, v):
+        self._mode = setOption(v, AirConditioner.modeNames)
+
+    @property
+    def fan(self):
+        return AirConditioner.fanSpeedNames[self._fan]
+
+    @fan.setter
+    def fan(self, v):
+        self._fan = setOption(v, AirConditioner.fanSpeedNames)
+
+
     def set(self):
-        para = str(self.temperature)+","+str(self.mode)+","+str(self.fan)+","+self.powerState
+        para = str(self.temperature)+","+str(self._mode+1)+","+str(self._fan+1)+",on"
         cmd = {
             "command":"setAll",
             "parameter": para,
             "commandType":"command"
         }
 
-        return self.post(cmd)
+        if self.post(cmd):
+            return self.name + " set. " + self.status()
+
+
+    def cool(self, t):
+        self.temperature = t
+        self.mode = "cool"
+        return self.set()
 
 
 
