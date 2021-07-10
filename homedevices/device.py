@@ -36,11 +36,16 @@ class Device:
 
 
     def __str__(self):
-        s = str(self.id) + ", " + self.name + ", " + self.type
+        s = "[\'" + self.name + "\'], type: " + self.type
         if self.isRemote:
-            s = s + "(remote)"
+            s += "(remote)"
+
+        s += ", status: " + self.status()
 
         return s
+
+    def status(self):
+        return "{}"
 
     def on(self):
         return self.post(Device.cmd_on)
@@ -64,8 +69,6 @@ class AirConditioner(Device):
         self.mode = "cool"
         self.fan = "auto"
 
-    def __str__(self):
-        return super().__str__() + "{ " + self.status() + " }"
 
     def status(self):
         s = "{ "
@@ -118,9 +121,8 @@ class Plug(Device):
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
 
-    def __str__(self):
-        s = super().__str__()
-        return s + " { power: " + self.power() + " }"
+    def status(self):
+        return "{ power: " + self.power + " }"
 
 
     def toggle(self):
@@ -143,7 +145,7 @@ class Plug(Device):
 class DIYLight(Device):
     # for my room's only
 
-    __stateNames__ = ["off", "on", "night"]
+    stateNames = ["off", "on", "night"]
     
     cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
     cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
@@ -153,32 +155,39 @@ class DIYLight(Device):
         isRemote = True
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
-        self.state = 1
+        self.power = 1
 
         self.on = partial(self.mode, next="on")
         self.off = partial(self.mode, next="off")
         self.night = partial(self.mode, next="night")
 
 
-    def __str__(self):
-        s = super().__str__()
-        s = s + " { state: " + DIYLight.__stateNames__[self.state] + " }"
-        return s
+    def status(self):
+        return "{ power: " + self.power + " }"
 
+
+    @property
+    def power(self):
+        return DIYLight.stateNames[self._power]
+
+    @power.setter
+    def power(self, v):
+        self._power = setOption(v, DIYLight.stateNames)
+    
 
     def mode(self, next):
         n = 0
 
-        if isinstance(next, str) and next in DIYLight.__stateNames__:
-            n = DIYLight.__stateNames__.index(next) - self.state
+        if isinstance(next, str) and next in DIYLight.stateNames:
+            n = DIYLight.stateNames.index(next) - self._power
             n = n%3
         elif isinstance(next, int):
             n = next%3
 
         if n == 1 and self.post(DIYLight.cmd_on):
-            self.state = (self.state + n)%3
+            self._power = (self._power + n)%3
         elif n == 2 and self.post(DIYLight.cmd_off):
-            self.state = (self.state + n)%3
+            self._power = (self._power + n)%3
 
 
     def brightness(self, n, absolute=False):
@@ -205,8 +214,6 @@ class HubMini(Device):
         isRemote = False
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
-    def __str__(self):
-        return self.type
 
     def off(self):pass
     def on(self):pass

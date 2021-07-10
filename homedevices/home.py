@@ -121,6 +121,10 @@ class Home:
         return request(url, headers, data)
 
 
+    def list(self):
+        for d in self.devices.values():
+            print(d)
+
     def down(self):
         for d in self.devices.values():
             d.off()
