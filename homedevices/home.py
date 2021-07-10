@@ -119,3 +119,14 @@ class Home:
             'Authorization' : self.autho,
         }
         return request(url, headers, data)
+
+
+    def down(self):
+        for d in self.devices.values():
+            d.off()
+
+    def on(self, d):
+        self.devices[d].on()
+
+    def off(self, d):
+        self.devices[d].off()
