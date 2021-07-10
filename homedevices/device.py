@@ -76,41 +76,27 @@ class Plug(Device):
         isRemote = False
         super().__init__(home, deviceId, name, deviceType, isRemote)
 
-        self.power = "off"
-        self.sync()
-
 
     def __str__(self):
         s = super().__str__()
-        return s + " { power: " + self.power + " }"
-
-
-    def on(self):
-        if super().on():
-            self.power = "on"
-
-
-    def off(self):
-        if super().off():
-            self.power = "off"
+        return s + " { power: " + self.power() + " }"
 
 
     def toggle(self):
-        self.sync()
-
-        if self.power == "on":
-            print("off")
+        p = self.power
+        if p == "on":
+            print("turning off")
             return self.off()
-        elif self.power == "off":
-            print("on")
+        elif p == "off":
+            print("turning on")
             return self.on()
 
-
-    def sync(self):
+    @property
+    def power(self):
         st = self.fetchStatus()
         if st:
-            self.power = st["power"]
-        return st
+            return st["power"]
+
 
 
 class DIYLight(Device):
