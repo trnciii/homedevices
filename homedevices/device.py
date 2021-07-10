@@ -48,11 +48,18 @@ class Device:
         return "{}"
 
     def on(self):
-        return self.post(Device.cmd_on)
+        print("turn " + self.name + " on")
+        if self.post(Device.cmd_on):
+            print(self.status())
+        else:
+            print("failed")
 
     def off(self):
-        return self.post(Device.cmd_off)
-
+        print("turn", self.name, "off")
+        if self.post(Device.cmd_off):
+            print(self.status())
+        else:
+            print("failed")
 
 
 class AirConditioner(Device):
@@ -103,8 +110,9 @@ class AirConditioner(Device):
             "commandType":"command"
         }
 
+        print("set", self.name, self.status(), "(command:", para+")")
         if self.post(cmd):
-            return self.name + " set. " + self.status()
+            print("success")
 
 
     def cool(self, t):
@@ -128,10 +136,8 @@ class Plug(Device):
     def toggle(self):
         p = self.power
         if p == "on":
-            print("turning off")
             return self.off()
         elif p == "off":
-            print("turning on")
             return self.on()
 
     @property
@@ -184,6 +190,8 @@ class DIYLight(Device):
         elif isinstance(next, int):
             n = next%3
 
+        print("turn", self.name, "form", self.power, "to", DIYLight.stateNames[(self._power + n)%3])
+ 
         if n == 1 and self.post(DIYLight.cmd_on):
             self._power = (self._power + n)%3
         elif n == 2 and self.post(DIYLight.cmd_off):
@@ -194,17 +202,23 @@ class DIYLight(Device):
         cmd = []
 
         if absolute:
+            print("set", self.name, "brightness", n)
             cmd = [DIYLight.cmd_down]*10 + [DIYLight.cmd_up]*n
         elif n>0:
+            print("brighten", self.name, "by", n)
             cmd = [DIYLight.cmd_up]*n
         elif n<0:
+            print("dim", self.name, "by", n)
             cmd = [DIYLight.cmd_down]*(-n)
 
         res = []
         for c in cmd:
             res.append(self.post(c))
 
-        return res
+        if res.count(True) == len(res):
+            print("success")
+        else:
+            print("failed.", res)
 
 
 

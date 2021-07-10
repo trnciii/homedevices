@@ -14,10 +14,13 @@ def request(url, headers, data=None):
             if body["message"] == "success":
                 return body["body"] if body["body"] else True
             else:
-                print(body["message"])
+                print("ERROR")
+                print("request data:", data)
+                print("response message:", body["message"])
+                print("response body", body["body"])
 
     except urllib.error.URLError as e:
-        print(e)
+        print("URLError", e)
 
 
 def write(file, string):

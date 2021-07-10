@@ -30,7 +30,7 @@ def delay(t, f, *args):
     
     def ex():
         time.sleep(60*t)
-        print(f(*args))
+        f(*args)
 
     th = threading.Thread(target=ex)
     th.start()
