@@ -22,8 +22,8 @@ def setOption(v, ls):
 
 class Device:
 
-    cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
-    cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
+    _cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
+    _cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
 
     def __init__(self, home, deviceId, name, deviceType, isRemote):
         self.id = deviceId
@@ -49,14 +49,14 @@ class Device:
 
     def on(self):
         print("turn " + self.name + " on")
-        if self.post(Device.cmd_on):
+        if self.post(Device._cmd_on):
             print(self.status())
         else:
             print("failed")
 
     def off(self):
         print("turn", self.name, "off")
-        if self.post(Device.cmd_off):
+        if self.post(Device._cmd_off):
             print(self.status())
         else:
             print("failed")
@@ -64,8 +64,8 @@ class Device:
 
 class AirConditioner(Device):
     
-    modeNames = ["auto", "cool", "dry", "fan", "heat"]
-    fanSpeedNames = ["auto", "low", "medium", "high"]
+    _modeNames = ["auto", "cool", "dry", "fan", "heat"]
+    _fanSpeedNames = ["auto", "low", "medium", "high"]
 
     def __init__(self, home, deviceId, name):
         deviceType = "Air Conditioner"
@@ -87,19 +87,19 @@ class AirConditioner(Device):
 
     @property
     def mode(self):
-        return AirConditioner.modeNames[self._mode]
+        return AirConditioner._modeNames[self._mode]
     
     @mode.setter
     def mode(self, v):
-        self._mode = setOption(v, AirConditioner.modeNames)
+        self._mode = setOption(v, AirConditioner._modeNames)
 
     @property
     def fan(self):
-        return AirConditioner.fanSpeedNames[self._fan]
+        return AirConditioner._fanSpeedNames[self._fan]
 
     @fan.setter
     def fan(self, v):
-        self._fan = setOption(v, AirConditioner.fanSpeedNames)
+        self._fan = setOption(v, AirConditioner._fanSpeedNames)
 
 
     def set(self):
@@ -151,10 +151,10 @@ class Plug(Device):
 class DIYLight(Device):
     # for my room's only
 
-    stateNames = ["off", "on", "night"]
+    _stateNames = ["off", "on", "night"]
     
-    cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
-    cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
+    _cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
+    _cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
     def __init__(self, home, deviceId, name):
         deviceType = "DIY Light"
@@ -174,27 +174,27 @@ class DIYLight(Device):
 
     @property
     def power(self):
-        return DIYLight.stateNames[self._power]
+        return DIYLight._stateNames[self._power]
 
     @power.setter
     def power(self, v):
-        self._power = setOption(v, DIYLight.stateNames)
+        self._power = setOption(v, DIYLight._stateNames)
     
 
     def mode(self, next):
         n = 0
 
-        if isinstance(next, str) and next in DIYLight.stateNames:
-            n = DIYLight.stateNames.index(next) - self._power
+        if isinstance(next, str) and next in DIYLight._stateNames:
+            n = DIYLight._stateNames.index(next) - self._power
             n = n%3
         elif isinstance(next, int):
             n = next%3
 
-        print("turn", self.name, "form", self.power, "to", DIYLight.stateNames[(self._power + n)%3])
+        print("turn", self.name, "form", self.power, "to", DIYLight._stateNames[(self._power + n)%3])
  
-        if n == 1 and self.post(DIYLight.cmd_on):
+        if n == 1 and self.post(DIYLight._cmd_on):
             self._power = (self._power + n)%3
-        elif n == 2 and self.post(DIYLight.cmd_off):
+        elif n == 2 and self.post(DIYLight._cmd_off):
             self._power = (self._power + n)%3
 
 
@@ -203,13 +203,13 @@ class DIYLight(Device):
 
         if absolute:
             print("set", self.name, "brightness", n)
-            cmd = [DIYLight.cmd_down]*10 + [DIYLight.cmd_up]*n
+            cmd = [DIYLight._cmd_down]*10 + [DIYLight._cmd_up]*n
         elif n>0:
             print("brighten", self.name, "by", n)
-            cmd = [DIYLight.cmd_up]*n
+            cmd = [DIYLight._cmd_up]*n
         elif n<0:
             print("dim", self.name, "by", n)
-            cmd = [DIYLight.cmd_down]*(-n)
+            cmd = [DIYLight._cmd_down]*(-n)
 
         res = []
         for c in cmd:
