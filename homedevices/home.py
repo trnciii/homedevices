@@ -52,9 +52,11 @@ class Home:
 
 
     def __str__(self):
-        s = "---- devices ----\n"
-        for d in self.devices:
-            s += d + "\n"
+        w = 2 + max([len(i) for i in self.devices.keys()])
+
+        s  = "---- devices ----\n"
+        for d in self.devices.values():
+            s += d.name.ljust(w) + d.status() + "\n"
         s += "---- ------- ----\n"
         return s
 
