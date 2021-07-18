@@ -72,7 +72,7 @@ class Home:
             with open(path_autho, "r") as f:
                 self.autho = f.readline().replace("\n", "")
         except:
-            self.autho = input("enter an authorization token: ")
+            self.autho = input("enter an authentication: ")
             write(path_autho, self.autho)
 
 
