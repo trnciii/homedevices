@@ -34,3 +34,10 @@ def delay(t, f, *args):
 
     th = threading.Thread(target=ex)
     th.start()
+
+def ls(l):
+    if isinstance(l, dict):
+        l = l.values()
+
+    for i in l:
+        print(i)

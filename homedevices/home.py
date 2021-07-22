@@ -61,7 +61,7 @@ class Home:
         return s
 
 
-    # autho token
+# autho
     def setAutho(self, string=None):
         if string:
             self.autho = string
@@ -72,11 +72,11 @@ class Home:
             with open(path_autho, "r") as f:
                 self.autho = f.readline().replace("\n", "")
         except:
-            self.autho = input("enter an authentication: ")
+            self.autho = input("enter authentication: ")
             write(path_autho, self.autho)
 
 
-    # devices
+# devices
     def loadDevices(self):
         src = self.fetchDeviceList()
 
@@ -110,7 +110,7 @@ class Home:
                 return deviceList
 
 
-    # actions
+# commands
     def fetchStatus(self, deviceId):
         url = 'https://api.switch-bot.com/v1.0/devices/'+deviceId+'/status'
         headers = {'Authorization' : self.autho}
@@ -126,10 +126,7 @@ class Home:
         return request(url, headers, data)
 
 
-    def list(self):
-        for d in self.devices.values():
-            print(d)
-
+# actions
     def down(self):
         for d in self.devices.values():
             d.off()
