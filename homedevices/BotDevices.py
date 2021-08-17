@@ -1,38 +1,17 @@
 from functools import partial
+from .util import request, setOption
 
-def toOptions(ls):
-    s = "[ "
-    for i in range(len(ls)):
-        s += str(i) + " " + str(ls[i])
-        if i < len(ls)-1:
-            s += " | "
-
-    return s + " ]"
-
-def setOption(v, ls):
-    if v in ls:
-        return ls.index(v)
-
-    if isinstance(v, int) and 0<=v and v<len(ls):
-        return v
-
-    v = input("choose option " + toOptions(ls) + " >>")
-    return setOption(int(v) if v.isdigit() else v, ls)
-
-
-class Device:
+class BotDevice:
 
     _cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
     _cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
 
-    def __init__(self, home, deviceId, name, deviceType, isRemote):
+    def __init__(self, autho, deviceId, name, deviceType, isRemote):
         self.id = deviceId
         self.name = name
         self.type = deviceType
         self.isRemote = isRemote
-
-        self.post = partial(home.postCommand, deviceId=self.id)
-        self.fetchStatus = partial(home.fetchStatus, deviceId=self.id)
+        self.autho = autho
 
 
     def __str__(self):
@@ -44,33 +23,49 @@ class Device:
 
         return s
 
+
+    def fetchStatus(self):
+        url = 'https://api.switch-bot.com/v1.0/devices/'+self.id+'/status'
+        headers = {'Authorization' : self.autho}
+        return request(url, headers)
+
+
+    def post(self, data):
+        url = 'https://api.switch-bot.com/v1.0/devices/'+self.id+'/commands'
+        headers = {
+            'Content-Type': 'application/json; charset: utf8',
+            'Authorization' : self.autho,
+        }
+        return request(url, headers, data)
+
+
     def status(self):
         return "{}"
 
     def on(self):
         print("turn " + self.name + " on")
-        if self.post(Device._cmd_on):
+        if self.post(BotDevice._cmd_on):
             print(self.status())
         else:
             print("failed")
 
     def off(self):
         print("turn", self.name, "off")
-        if self.post(Device._cmd_off):
+        if self.post(BotDevice._cmd_off):
             print(self.status())
         else:
             print("failed")
 
 
-class AirConditioner(Device):
+class AirConditioner(BotDevice):
     
     _modeNames = ["auto", "cool", "dry", "fan", "heat"]
     _fanSpeedNames = ["auto", "low", "medium", "high"]
 
-    def __init__(self, home, deviceId, name):
+    def __init__(self, autho, deviceId, name):
         deviceType = "Air Conditioner"
         isRemote = True
-        super().__init__(home, deviceId, name, deviceType, isRemote)
+        super().__init__(autho, deviceId, name, deviceType, isRemote)
 
         self.temperature = 25
         self.mode = "cool"
@@ -122,11 +117,11 @@ class AirConditioner(Device):
 
 
 
-class Plug(Device):
-    def __init__(self, home, deviceId, name):
+class Plug(BotDevice):
+    def __init__(self, autho, deviceId, name):
         deviceType = "Plug"
         isRemote = False
-        super().__init__(home, deviceId, name, deviceType, isRemote)
+        super().__init__(autho, deviceId, name, deviceType, isRemote)
 
 
     def status(self):
@@ -148,7 +143,7 @@ class Plug(Device):
 
 
 
-class DIYLight(Device):
+class DIYLight(BotDevice):
     # for my room's only
 
     _stateNames = ["off", "on", "night"]
@@ -156,10 +151,10 @@ class DIYLight(Device):
     _cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
     _cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
-    def __init__(self, home, deviceId, name):
+    def __init__(self, autho, deviceId, name):
         deviceType = "DIY Light"
         isRemote = True
-        super().__init__(home, deviceId, name, deviceType, isRemote)
+        super().__init__(autho, deviceId, name, deviceType, isRemote)
 
         self.power = 1
 
@@ -222,11 +217,11 @@ class DIYLight(Device):
 
 
 
-class HubMini(Device):
-    def __init__(self, home, deviceId, name):
+class HubMini(BotDevice):
+    def __init__(self, autho, deviceId, name):
         deviceType = "Hub Mini"
         isRemote = False
-        super().__init__(home, deviceId, name, deviceType, isRemote)
+        super().__init__(autho, deviceId, name, deviceType, isRemote)
 
 
     def off(self):pass

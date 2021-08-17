@@ -1,35 +1,9 @@
 import json
-import urllib.request
 import os
+import datetime
 
-from .device import *
+from .BotDevices import *
 from .util import *
-
-
-def request(url, headers, data=None):
-    req = urllib.request.Request(url, json.dumps(data).encode() if data else None, headers)
-    try:
-        with urllib.request.urlopen(req) as response:
-            body = json.loads(response.read())
-            if body["message"] == "success":
-                return body["body"] if body["body"] else True
-            else:
-                print("ERROR")
-                print("request data:", data)
-                print("response message:", body["message"])
-                print("response body", body["body"])
-
-    except urllib.error.URLError as e:
-        print("URLError", e)
-
-
-def write(file, string):
-    try:
-        open(file, "w").write(string)
-        print("saved", file)
-    except:
-        print("failed to save", file)
-
 
 
 class Home:
@@ -84,12 +58,12 @@ class Home:
 
         for s in src["deviceList"]:
             deviceType = s["deviceType"].replace(" ", "")
-            device = eval(deviceType)(self, s["deviceId"], s["deviceName"])
+            device = eval(deviceType)(self.autho, s["deviceId"], s["deviceName"])
             self.devices[s["deviceName"]] = device
 
         for s in src["infraredRemoteList"]:
             deviceType = s["remoteType"].replace(" ", "")
-            device = eval(deviceType)(self, s["deviceId"], s["deviceName"])
+            device = eval(deviceType)(self.autho, s["deviceId"], s["deviceName"])
             self.devices[s["deviceName"]] = device
             
 
@@ -108,22 +82,6 @@ class Home:
             if deviceList:
                 write(path_devices, json.dumps(deviceList, indent=4))
                 return deviceList
-
-
-# commands
-    def fetchStatus(self, deviceId):
-        url = 'https://api.switch-bot.com/v1.0/devices/'+deviceId+'/status'
-        headers = {'Authorization' : self.autho}
-        return request(url, headers)
-
-
-    def postCommand(self, data, deviceId):
-        url = 'https://api.switch-bot.com/v1.0/devices/'+deviceId+'/commands'
-        headers = {
-            'Content-Type': 'application/json; charset: utf8',
-            'Authorization' : self.autho,
-        }
-        return request(url, headers, data)
 
 
 # actions

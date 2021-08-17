@@ -2,6 +2,8 @@ import os
 import shutil
 import time
 import threading
+import urllib.request
+import json
 
 
 path_lib = os.path.dirname(os.path.abspath(__file__))
@@ -41,3 +43,48 @@ def ls(l):
 
     for i in l:
         print(i)
+
+
+def request(url, headers, data=None):
+    req = urllib.request.Request(url, json.dumps(data).encode() if data else None, headers)
+    try:
+        with urllib.request.urlopen(req) as response:
+            body = json.loads(response.read())
+            if body["message"] == "success":
+                return body["body"] if body["body"] else True
+            else:
+                print("ERROR")
+                print("request data:", data)
+                print("response message:", body["message"])
+                print("response body", body["body"])
+
+    except urllib.error.URLError as e:
+        print("URLError", e)
+
+
+def write(file, string):
+    try:
+        open(file, "w").write(string)
+        print("saved", file)
+    except:
+        print("failed to save", file)
+
+
+def toOptions(ls):
+    s = "[ "
+    for i in range(len(ls)):
+        s += str(i) + " " + str(ls[i])
+        if i < len(ls)-1:
+            s += " | "
+
+    return s + " ]"
+
+def setOption(v, ls):
+    if v in ls:
+        return ls.index(v)
+
+    if isinstance(v, int) and 0<=v and v<len(ls):
+        return v
+
+    v = input("choose option " + toOptions(ls) + " >>")
+    return setOption(int(v) if v.isdigit() else v, ls)
