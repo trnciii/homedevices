@@ -17,7 +17,7 @@ class Home:
         self.setAutho()
 
         self.devices = {}
-        self.loadDevices()
+        self.loadDevices_bot()
 
         self.removeAutho = removeAutho
         self.removeDeviceList = removeDeviceList
@@ -51,8 +51,8 @@ class Home:
 
 
 # devices
-    def loadDevices(self):
-        src = self.fetchDeviceList()
+    def loadDevices_bot(self):
+        src = self.fetchDeviceList_bot()
 
         if not src: return
 
@@ -67,7 +67,7 @@ class Home:
             self.devices[s["deviceName"]] = device
             
 
-    def fetchDeviceList(self):
+    def fetchDeviceList_bot(self):
         try:
             with open(path_devices, "r") as f:
                 print("using local device list")
