@@ -1,5 +1,6 @@
 from functools import partial
 from .util import request, setOption
+from .util import terminal_red
 
 class BotDevice:
 
@@ -12,6 +13,7 @@ class BotDevice:
         self.type = deviceType
         self.isRemote = isRemote
         self.autho = autho
+        self.debug = False
 
 
     def __str__(self):
@@ -21,13 +23,16 @@ class BotDevice:
 
         s += ", status: " + self.status()
 
+        if self.debug:
+            s += ', ' + terminal_red('DEBUG MODE')
+
         return s
 
 
     def fetchStatus(self):
         url = 'https://api.switch-bot.com/v1.0/devices/'+self.id+'/status'
         headers = {'Authorization' : self.autho}
-        return request(url, headers)
+        return request(url, headers, debug=self.debug)
 
 
     def post(self, data):
@@ -36,7 +41,7 @@ class BotDevice:
             'Content-Type': 'application/json; charset: utf8',
             'Authorization' : self.autho,
         }
-        return request(url, headers, data)
+        return request(url, headers, data, debug=self.debug)
 
 
     def status(self):
@@ -154,6 +159,8 @@ class Plug(BotDevice):
         st = self.fetchStatus()
         if st:
             return st["power"]
+        else:
+            return 'none'
 
 
 

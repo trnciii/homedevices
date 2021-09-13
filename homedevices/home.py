@@ -79,11 +79,18 @@ class Home:
             url = 'https://api.switch-bot.com/v1.0/devices'
             headers = {'Authorization' : self.autho}
 
-            deviceList = request(url, headers)
+            deviceList = request(url, headers, debug=self.debug)
             if deviceList:
                 write(path_devices, json.dumps(deviceList, indent=4))
                 return deviceList
 
+    def debug_on(self):
+        for d in self.devices.values():
+            d.debug = True
+
+    def debug_off(self):
+        for d in self.devices.values():
+            d.debug = False
 
 # actions
     def execute(self, cmd):

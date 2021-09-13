@@ -45,7 +45,15 @@ def ls(l):
         print(i)
 
 
-def request(url, headers, data=None):
+def request(url, headers, data=None, debug=False):
+
+    if debug:
+        print('request (debug mode)')
+        print('url :', url)
+        print('headers :', headers)
+        print('data :', data)
+        return False
+
     req = urllib.request.Request(url, json.dumps(data).encode() if data else None, headers)
     try:
         with urllib.request.urlopen(req) as response:
@@ -88,3 +96,19 @@ def setOption(v, ls):
 
     v = input("choose option " + toOptions(ls) + " >>")
     return setOption(int(v) if v.isdigit() else v, ls)
+
+
+def terminal_red(s):
+    return "\033[1;31m" + s + "\033[0m"
+
+def terminal_green(s):
+    return "\033[1;32m" + s + "\033[0m"
+
+def terminal_yellow(s):
+    return "\033[1;33m" + s + "\033[0m"
+
+def terminal_blue(s):
+    return "\033[1;34m" + s + "\033[0m"
+
+def terminal_bold(s):
+    return "\033[1;1m" + s + "\033[0m"
