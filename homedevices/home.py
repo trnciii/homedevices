@@ -10,10 +10,11 @@ from .util import *
 class Home:
 
     executable = [
-        'debug_on',
-        'debug_off',
+        'debug',
         'down',
     ]
+
+    properties = []
 
     def __init__(self):
 
@@ -29,7 +30,7 @@ class Home:
         self.removeAutho = removeAutho
         self.removeDeviceList = removeDeviceList
 
-        print(self)
+        # print(self)
 
 
     def __str__(self):
@@ -93,13 +94,18 @@ class Home:
                 write(path_devices, json.dumps(deviceList, indent=4))
                 return deviceList
 
-    def debug_on(self):
-        for d in self.devices.values():
-            d.debug = True
 
-    def debug_off(self):
-        for d in self.devices.values():
-            d.debug = False
+    def debug(self, v):
+        if v in ['on', True]:
+            print('entering debug mode')
+            for d in self.devices.values():
+                d.debug = True
+
+        elif v in ['off', False]:
+            print('leaving debug mode')
+            for d in self.devices.values():
+                d.debug = False
+
 
 # actions
     def execute(self, cmd):
@@ -137,6 +143,11 @@ class Home:
 
         if cmd[1] in device.executable:
             return exec('device.'+cmd[1]+'('+','.join(cmd[2:])+')')
+        elif cmd[1] in device.properties:
+            if len(cmd)>2:
+                return exec('device.'+cmd[1]+'=cmd[2]')
+            else:
+                return exec('print(device.'+cmd[1]+')')
         else:
             return 'command ' + quate(cmd[1]) + ' not found in ' + cmd[0]
 

@@ -37,8 +37,11 @@ def execute(home, cmd):
 
 def run():
     print('running interactive interface')
+
     home = Home()
-    # home.debug_on()
+    # home.debug('on')
+    print(home)
+
     while(True):
         try:
             cmd = input('>>> ').split()

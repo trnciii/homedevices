@@ -93,8 +93,13 @@ def setOption(v, ls):
     if v in ls:
         return ls.index(v)
 
+    # when v is int
     if isinstance(v, int) and 0<=v and v<len(ls):
         return v
+
+    # when v is 'n'
+    if v in [str(i) for i in range(len(ls))]:
+        return int(v)
 
     v = input("choose option " + toOptions(ls) + " >>")
     return setOption(int(v) if v.isdigit() else v, ls)

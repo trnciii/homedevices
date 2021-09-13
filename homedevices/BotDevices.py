@@ -7,6 +7,16 @@ class BotDevice:
     _cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
     _cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
 
+    properties = [
+        'debug'
+    ]
+
+    executable = [
+        'on',
+        'off',
+        'status'
+    ]
+
     def __init__(self, autho, deviceId, name, deviceType, isRemote):
         self.id = deviceId
         self.name = name
@@ -65,12 +75,15 @@ class AirConditioner(BotDevice):
     _modeNames = ["auto", "cool", "dry", "fan", "heat"]
     _fanSpeedNames = ["auto", "low", "medium", "high"]
 
-    executable = [
-        'status',
+    executable = BotDevice.executable + [
         'set',
         'cool',
-        'on',
-        'off'
+    ]
+
+    properties = BotDevice.properties + [
+        'mode',
+        'fan',
+        'temperature'
     ]
 
     def __init__(self, autho, deviceId, name):
@@ -129,12 +142,11 @@ class AirConditioner(BotDevice):
 
 
 class Plug(BotDevice):
-    executable = [
-        'status',
+
+    executable = BotDevice.executable + [
         'toggle',
-        'on',
-        'off'
     ]
+
     def __init__(self, autho, deviceId, name):
         deviceType = "Plug"
         isRemote = False
@@ -170,13 +182,14 @@ class DIYLight(BotDevice):
     _cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
     _cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
-    executable = [
-        'on',
-        'off',
+    executable = BotDevice.executable + [
         'night',
-        'status',
         'mode',
         'brightness',
+    ]
+
+    properties = BotDevice.properties + [
+        'power'
     ]
 
     def __init__(self, autho, deviceId, name):
