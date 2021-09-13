@@ -4,8 +4,9 @@ from .home import Home
 from .util import *
 
 def execute(home, cmd):
+    if len(cmd)==0: return
+
     if cmd[0] == 'py':
-        print(" ".join(cmd[1:]))
         return exec(" ".join(cmd[1:]))
 
     elif cmd[0] == 'clean':
