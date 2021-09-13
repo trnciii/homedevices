@@ -1,6 +1,7 @@
 import json
 import os
 import datetime
+import sys
 
 from .BotDevices import *
 from .util import *
@@ -85,12 +86,26 @@ class Home:
 
 
 # actions
+    def execute(self, cmd):
+        '''
+        parse and execute a command in <Device name> <method> <args> style.
+        return function's return if succeed or some message otherwise.
+        '''
+        if cmd[0] not in self.devices.keys():
+            return cmd[0]+' not found in devices'
+
+        device = self.devices[cmd[0]]
+
+        if not len(cmd)>1:
+            return device.status()
+
+
+        if cmd[1] in device.executable:
+            return exec('device.'+cmd[1]+'('+','.join(cmd[2:])+')')
+        else:
+            return 'command \''+ cmd[1] + '\' not found in ' + cmd[0]
+
+
     def down(self):
         for d in self.devices.values():
             d.off()
-
-    def on(self, d):
-        self.devices[d].on()
-
-    def off(self, d):
-        self.devices[d].off()

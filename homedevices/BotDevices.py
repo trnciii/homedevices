@@ -62,6 +62,14 @@ class AirConditioner(BotDevice):
     _modeNames = ["auto", "cool", "dry", "fan", "heat"]
     _fanSpeedNames = ["auto", "low", "medium", "high"]
 
+    executable = [
+        'status',
+        'set',
+        'cool',
+        'on',
+        'off'
+    ]
+
     def __init__(self, autho, deviceId, name):
         deviceType = "Air Conditioner"
         isRemote = True
@@ -118,6 +126,12 @@ class AirConditioner(BotDevice):
 
 
 class Plug(BotDevice):
+    executable = [
+        'status',
+        'toggle',
+        'on',
+        'off'
+    ]
     def __init__(self, autho, deviceId, name):
         deviceType = "Plug"
         isRemote = False
@@ -150,6 +164,15 @@ class DIYLight(BotDevice):
     
     _cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
     _cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
+
+    executable = [
+        'on',
+        'off',
+        'night',
+        'status',
+        'mode',
+        'brightness',
+    ]
 
     def __init__(self, autho, deviceId, name):
         deviceType = "DIY Light"
@@ -218,6 +241,9 @@ class DIYLight(BotDevice):
 
 
 class HubMini(BotDevice):
+
+    executable = []
+
     def __init__(self, autho, deviceId, name):
         deviceType = "Hub Mini"
         isRemote = False

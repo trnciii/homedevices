@@ -1,15 +1,59 @@
-import sys
-from .home import clean
+import sys, traceback
 
-print(sys.argv)
+from .home import Home
+from .util import *
 
+def execute(home, cmd):
+    if cmd[0] == 'py':
+        print(" ".join(cmd[1:]))
+        return exec(" ".join(cmd[1:]))
+
+    elif cmd[0] == 'clean':
+        if input('delete all local data? [y/n]') == 'y':
+            clean()
+
+    elif cmd[0] in ['quit', 'q']:
+        exit()
+
+    elif cmd[0] in ['help', 'h']:
+        s = "Command list:\n\
+        <device name> <method> <args>   execute method\n\
+        \n\
+        clean                           remove all local data (use this before uninstall)\n\
+        quit                            quit application\n\
+        help                            show this message\n\
+        "
+
+        return s
+
+    elif cmd[0] == 'home':
+        return home.__str__()
+
+    elif cmd[0] in home.devices.keys():
+        return home.execute(cmd)
+
+    else:
+        return 'failed to find device or command'
+
+
+def run():
+    print('running interactive interface')
+    home = Home()
+    while(True):
+        try:
+            cmd = input('>>> ').split()
+            res = execute(home, cmd)
+            if res:
+                print(res)
+
+        except Exception:
+            print("Exception in user code:")
+            print("-"*60)
+            traceback.print_exc(file=sys.stdout)
+            print("-"*60)
+
+# main
 if len(sys.argv)>1:
-
-	if sys.argv[1] == "clean":
-		clean()
-		exit()
-
-s = "Command:\n\
-  clean	        remove all local data (use this before uninstall)"
-
-print(s)
+    execute(sys.argv[1:])
+else:
+    run()
