@@ -48,10 +48,12 @@ def ls(l):
 def request(url, headers, data=None, debug=False):
 
     if debug:
-        print('request (debug mode)')
+        print(terminal_red('debugging request'))
+        print('-'*40)
         print('url :', url)
         print('headers :', headers)
         print('data :', data)
+        print('-'*40)
         return False
 
     req = urllib.request.Request(url, json.dumps(data).encode() if data else None, headers)
@@ -112,3 +114,9 @@ def terminal_blue(s):
 
 def terminal_bold(s):
     return "\033[1;1m" + s + "\033[0m"
+
+def quate(s):
+    return '\'' + s + '\''
+
+def angle(s):
+    return '<' + s + '>'

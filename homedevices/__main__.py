@@ -7,7 +7,9 @@ def execute(home, cmd):
     if len(cmd)==0: return
 
     if cmd[0] == 'py':
-        return exec(" ".join(cmd[1:]))
+        code = " ".join(cmd[1:])
+        exec('res='+code, globals(), locals())
+        return locals()['res']
 
     elif cmd[0] == 'clean':
         if input('delete all local data? [y/n]') == 'y':
@@ -24,22 +26,19 @@ def execute(home, cmd):
         quit                            quit application\n\
         help                            show this message\n\
         "
-
         return s
 
-    elif cmd[0] == 'home':
-        return home.__str__()
-
-    elif cmd[0] in home.devices.keys():
+    elif cmd[0] in home.devices.keys() or cmd[0] == 'home':
         return home.execute(cmd)
 
     else:
-        return 'failed to find device or command'
+        return 'failed to find device or command. use <help> to show commands.'
 
 
 def run():
     print('running interactive interface')
     home = Home()
+    # home.debug_on()
     while(True):
         try:
             cmd = input('>>> ').split()
@@ -49,9 +48,9 @@ def run():
 
         except Exception:
             print("Exception in user code:")
-            print("-"*60)
+            print("-"*40)
             traceback.print_exc(file=sys.stdout)
-            print("-"*60)
+            print("-"*40)
 
 # main
 if len(sys.argv)>1:

@@ -17,14 +17,12 @@ class BotDevice:
 
 
     def __str__(self):
-        s = "[\'" + self.name + "\'], type: " + self.type
+        s = 'name : ' + self.name + ', type : ' + self.type
         if self.isRemote:
             s += "(remote)"
 
-        s += ", status: " + self.status()
-
-        if self.debug:
-            s += ', ' + terminal_red('DEBUG MODE')
+        s += ", status : " + self.status()
+        s += ', debug : ' + (terminal_red('True') if self.debug else 'False')
 
         return s
 
