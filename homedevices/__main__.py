@@ -57,6 +57,6 @@ def run():
 
 # main
 if len(sys.argv)>1:
-    execute(sys.argv[1:])
+    execute(Home(), sys.argv[1:])
 else:
     run()
