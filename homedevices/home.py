@@ -21,16 +21,19 @@ class Home:
         if not os.path.exists(path_data):
             os.mkdir(path_data)
 
+        self._debug = False
+
         self.autho = ""
         self.setAutho()
 
         self.devices = {}
         self.loadDevices_bot()
 
+        self.debug(False)
+
         self.removeAutho = removeAutho
         self.removeDeviceList = removeDeviceList
 
-        # print(self)
 
 
     def __str__(self):
@@ -89,7 +92,7 @@ class Home:
             url = 'https://api.switch-bot.com/v1.0/devices'
             headers = {'Authorization' : self.autho}
 
-            deviceList = request(url, headers, debug=self.debug)
+            deviceList = request(url, headers, debug=self._debug)
             if deviceList:
                 write(path_devices, json.dumps(deviceList, indent=4))
                 return deviceList
@@ -98,11 +101,13 @@ class Home:
     def debug(self, v):
         if v in ['on', True]:
             print('entering debug mode')
+            self._debug = True
             for d in self.devices.values():
                 d.debug = True
 
         elif v in ['off', False]:
             print('leaving debug mode')
+            self._debug = False
             for d in self.devices.values():
                 d.debug = False
 
