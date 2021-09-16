@@ -39,7 +39,7 @@ def run():
     print('running interactive interface')
 
     home = Home()
-    # home.debug('on')
+    home.debug('on')
     print(home)
 
     while(True):
