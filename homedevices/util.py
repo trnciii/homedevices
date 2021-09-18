@@ -8,12 +8,12 @@ import json
 
 path_lib = os.path.dirname(os.path.abspath(__file__))
 path_data = path_lib+"/data"
-path_autho = path_data+"/autho"
+path_config = path_data+'/config.json'
 path_devices = path_data+"/devices.json"
 
 executable = [
     'clean',
-    'removeAutho',
+    'removeConfig',
     'removeDeviceList',
     'delay'
 ]
@@ -25,10 +25,10 @@ def clean():
         print("deleted", path_data)
 
 
-def removeAutho():
-    if input('delete authentication info? [y/n]') == 'y':
-        os.remove(path_autho)
-        print("removed", path_autho)
+def removeConfig():
+    if input('delete config? [y/n]') == 'y':
+        os.remove(path_config)
+        print("removed", path_config)
 
 
 def removeDeviceList():

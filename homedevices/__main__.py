@@ -24,18 +24,22 @@ def execute(home, cmd):
         "
         return s
 
+    # util
     elif cmd[0] in util.executable:
         return exec('util.'+cmd[0] + '(*cmd[1:])')
 
+    # device
     elif cmd[0] in home.devices.keys():
         return home.execute_device(cmd)
 
+    # home
     elif cmd[0] == 'home':
         return home.execute_home(cmd[1:])
 
-    elif cmd[0] in home.executable:
+    elif cmd[0] in home.executable + home.properties:
         return home.execute_home(cmd)
 
+    # fail
     else:
         return 'failed to find device or command. use <help> to show commands.'
 
@@ -44,9 +48,6 @@ def run():
     print('running interactive interface')
 
     home = Home()
-    home.debug('on')
-    print(home)
-
     while(True):
         try:
             cmd = input('>>> ').split()

@@ -12,7 +12,12 @@ class Home:
     executable = [
         'debug',
         'down',
+
+        'saveConfig',
         'setAutho',
+        'debug_default',
+        'loadConfig'
+
         'fetchDeviceList_bot',
         'loadDevices_bot',
         'pullDevices_bot'
@@ -27,13 +32,13 @@ class Home:
 
         self._debug = False
 
-        self.autho = ""
-        self.setAutho()
+        self.loadConfig()
 
         self.devices = {}
         self.loadDevices_bot()
 
-        self.debug(False)
+        if self.config['debug_default']:
+            self.debug(True)
 
 
     def __str__(self):
@@ -49,19 +54,42 @@ class Home:
         return s
 
 
-# autho
+# config
+    def saveConfig(self):
+        write(path_config, json.dumps(self.config, indent=4))
+
+
+    def loadConfig(self):
+        self.config = {}
+        if os.path.exists(path_config):
+            self.config = json.load(open(path_config, 'r'))
+
+        self.setAutho()
+        if not 'debug_default' in self.config.keys():
+            self.config['debug_default'] = False
+
+
+    def debug_default(self, v=None):
+        if v in ['on', True, 'True']:
+            self.config['debug_default'] = True
+            self.saveConfig()
+
+        elif v in ['off', False, 'False']:
+            self.config['debug_default'] = False
+            self.saveConfig()
+
+        else:
+            self.debug_default
+
+
     def setAutho(self, string=None):
         if string:
-            self.autho = string
-            write(path_autho, self.autho)
-            return
+            self.config['autho_bot'] = string
+            self.saveConfig()
 
-        try:
-            with open(path_autho, "r") as f:
-                self.autho = f.readline().replace("\n", "")
-        except:
-            self.autho = input("enter authentication: ")
-            write(path_autho, self.autho)
+        elif not 'autho_bot' in self.config.keys():
+            self.config['autho_bot'] = input('enter authentication: ')
+            self.saveConfig()
 
 
 # devices
@@ -79,20 +107,22 @@ class Home:
             print('failed to load Switch Bot Devices')
             return
 
+        autho = self.config['autho_bot']
+
         for s in src["deviceList"]:
             deviceType = s["deviceType"].replace(" ", "")
-            device = eval(deviceType)(self.autho, s["deviceId"], s["deviceName"])
+            device = eval(deviceType)(autho, s["deviceId"], s["deviceName"])
             self.devices[s["deviceName"]] = device
 
         for s in src["infraredRemoteList"]:
             deviceType = s["remoteType"].replace(" ", "")
-            device = eval(deviceType)(self.autho, s["deviceId"], s["deviceName"])
+            device = eval(deviceType)(autho, s["deviceId"], s["deviceName"])
             self.devices[s["deviceName"]] = device
             
 
     def fetchDeviceList_bot(self):
         url = 'https://api.switch-bot.com/v1.0/devices'
-        headers = {'Authorization' : self.autho}
+        headers = {'Authorization' : self.config['autho_bot']}
 
         deviceList = request(url, headers, debug=self._debug)
         if deviceList:
