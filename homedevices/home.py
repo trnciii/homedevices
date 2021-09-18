@@ -15,6 +15,7 @@ class Home:
         'setAutho',
         'fetchDeviceList_bot',
         'loadDevices_bot',
+        'pullDevices_bot'
     ]
 
     properties = []
@@ -65,9 +66,18 @@ class Home:
 
 # devices
     def loadDevices_bot(self):
-        src = self.fetchDeviceList_bot()
+        self.devices = {}
 
-        if not src: return
+        try:
+            print("using local device list")
+            src = json.load(open(path_devices, "r"))
+        except:
+            print("fetchig device list from server")
+            src = self.fetchDeviceList_bot()
+
+        if not src:
+            print('failed to load Switch Bot Devices')
+            return
 
         for s in src["deviceList"]:
             deviceType = s["deviceType"].replace(" ", "")
@@ -81,20 +91,17 @@ class Home:
             
 
     def fetchDeviceList_bot(self):
-        try:
-            with open(path_devices, "r") as f:
-                print("using local device list")
-                return json.load(f)
-        except:
-            print("fetchig device list")
+        url = 'https://api.switch-bot.com/v1.0/devices'
+        headers = {'Authorization' : self.autho}
 
-            url = 'https://api.switch-bot.com/v1.0/devices'
-            headers = {'Authorization' : self.autho}
+        deviceList = request(url, headers, debug=self._debug)
+        if deviceList:
+            write(path_devices, json.dumps(deviceList, indent=4))
+            return deviceList
 
-            deviceList = request(url, headers, debug=self._debug)
-            if deviceList:
-                write(path_devices, json.dumps(deviceList, indent=4))
-                return deviceList
+    def pullDevices_bot(self):
+        self.fetchDeviceList_bot()
+        self.loadDevices_bot()
 
 
     def debug(self, v):
