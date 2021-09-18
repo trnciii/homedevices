@@ -12,6 +12,9 @@ class Home:
     executable = [
         'debug',
         'down',
+        'setAutho',
+        'fetchDeviceList_bot',
+        'loadDevices_bot',
     ]
 
     properties = []
@@ -30,10 +33,6 @@ class Home:
         self.loadDevices_bot()
 
         self.debug(False)
-
-        self.removeAutho = removeAutho
-        self.removeDeviceList = removeDeviceList
-
 
 
     def __str__(self):
@@ -113,30 +112,14 @@ class Home:
 
 
 # actions
-    def execute(self, cmd):
-        '''
-        parse and execute a command in <Device name> <method> <args> style.
-        return function's return if succeed or some message otherwise.
-        '''
-        if len(cmd)==0: return
-
-        if cmd[0] == 'home':
-            return self.execute_home(cmd)
-
-        if cmd[0] in self.devices.keys():
-            return self.execute_device(cmd)
-
-        return 'device' + quate(cmd[0]) + ' not found'
-
-
     def execute_home(self, cmd):
-        if not len(cmd)>1:
+        if not len(cmd)>0:
             return self.__str__()
 
-        if cmd[1] in self.executable:
-            return exec('self.'+cmd[1]+'('+','.join(cmd[2:])+')')
+        if cmd[0] in self.executable:
+            return exec('self.'+cmd[0]+'(*cmd[1:])')
         else:
-            return 'command ' + quate(cmd[1]) + ' not found in Home'
+            return 'command ' + quate(cmd[0]) + ' not found in Home'
 
 
     def execute_device(self, cmd):

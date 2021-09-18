@@ -1,7 +1,7 @@
 import sys, traceback
 
 from .home import Home
-from .util import *
+from . import util
 
 def execute(home, cmd):
     if len(cmd)==0: return
@@ -10,10 +10,6 @@ def execute(home, cmd):
         code = " ".join(cmd[1:])
         exec('res='+code, globals(), locals())
         return locals()['res']
-
-    elif cmd[0] == 'clean':
-        if input('delete all local data? [y/n]') == 'y':
-            clean()
 
     elif cmd[0] in ['quit', 'q']:
         exit()
@@ -28,8 +24,17 @@ def execute(home, cmd):
         "
         return s
 
-    elif cmd[0] in home.devices.keys() or cmd[0] == 'home':
-        return home.execute(cmd)
+    elif cmd[0] in util.executable:
+        return exec('util.'+cmd[0] + '(*cmd[1:])')
+
+    elif cmd[0] in home.devices.keys():
+        return home.execute_device(cmd)
+
+    elif cmd[0] == 'home':
+        return home.execute_home(cmd[1:])
+
+    elif cmd[0] in home.executable:
+        return home.execute_home(cmd)
 
     else:
         return 'failed to find device or command. use <help> to show commands.'

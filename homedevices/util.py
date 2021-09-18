@@ -11,16 +11,24 @@ path_data = path_lib+"/data"
 path_autho = path_data+"/autho"
 path_devices = path_data+"/devices.json"
 
+executable = [
+    'clean',
+    'removeAutho',
+    'removeDeviceList',
+    'delay'
+]
+
 
 def clean():
-    if os.path.exists(path_data):
+    if input('delete all local data? [y/n]') == 'y':
         shutil.rmtree(path_data)
         print("deleted", path_data)
 
 
 def removeAutho():
-    os.remove(path_autho)
-    print("removed", path_autho)
+    if input('delete authentication info? [y/n]') == 'y':
+        os.remove(path_autho)
+        print("removed", path_autho)
 
 
 def removeDeviceList():
