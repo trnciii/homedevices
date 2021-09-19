@@ -42,13 +42,13 @@ class Home:
 
 
     def __str__(self):
-        w = 2 + max([len(i) for i in self.devices.keys()])
+        w = 1 + max([len(i) for i in self.devices.keys()])
 
         s  = "---- devices ----\n"
         for d in self.devices.values():
-            s += d.name.ljust(w) + d.status()
             if d.debug:
-                s += terminal_red(' DEBUG MODE')
+                s += terminal_red('DEBUG ')
+            s += d.name.ljust(w) + json.dumps(d.status())
             s += '\n'
         s += "---- ------- ----\n"
         return s

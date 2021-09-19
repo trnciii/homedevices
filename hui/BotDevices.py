@@ -53,17 +53,15 @@ class BotDevice:
 
 
     def status(self):
-        return "{}"
+        return {}
 
     def on(self):
-        print("turn " + self.name + " on")
         if self.post(BotDevice._cmd_on):
             print(self.status())
         else:
             print("failed")
 
     def off(self):
-        print("turn", self.name, "off")
         if self.post(BotDevice._cmd_off):
             print(self.status())
         else:
@@ -97,11 +95,11 @@ class AirConditioner(BotDevice):
 
 
     def status(self):
-        s = "{ "
-        s = s + "temperature: " + str(self.temperature) + ", "
-        s = s + "mode: " + self.mode + ", "
-        s = s + "fan: " + self.fan + " }"
-        return s
+        return {
+            'temperature': self.temperature,
+            'mode': self.mode,
+            'fan': self.fan
+        }
 
 
     @property
@@ -129,7 +127,7 @@ class AirConditioner(BotDevice):
             "commandType":"command"
         }
 
-        print("set", self.name, self.status(), "(command:", para+")")
+        print("set", self.status())
         if self.post(cmd):
             print("success")
 
@@ -154,7 +152,7 @@ class Plug(BotDevice):
 
 
     def status(self):
-        return "{ power: " + self.power + " }"
+        return {'power':self.power}
 
 
     def toggle(self):
@@ -205,7 +203,7 @@ class DIYLight(BotDevice):
 
 
     def status(self):
-        return "{ power: " + self.power + " }"
+        return {'power':self.power}
 
 
     @property
