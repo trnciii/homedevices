@@ -114,9 +114,8 @@ class AirConditioner(BotDevice):
             "commandType":"command"
         }
 
-        print("set", self.status())
         if self.post(cmd):
-            print("success")
+            print(self.status())
 
 
     def cool(self, t):
