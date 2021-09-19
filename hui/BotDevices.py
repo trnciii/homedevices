@@ -8,7 +8,9 @@ class BotDevice:
     _cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
 
     properties = [
-        'debug'
+        'debug',
+        'properties',
+        'executable'
     ]
 
     executable = [
@@ -223,6 +225,8 @@ class DIYLight(BotDevice):
             n = n%3
         elif isinstance(next, int):
             n = next%3
+        else:
+            n = int(next)%3
 
         print("turn", self.name, "form", self.power, "to", DIYLight._stateNames[(self._power + n)%3])
  
@@ -232,18 +236,17 @@ class DIYLight(BotDevice):
             self._power = (self._power + n)%3
 
 
-    def brightness(self, n, absolute=False):
-        cmd = []
+    def brightness(self, n):
 
-        if absolute:
-            print("set", self.name, "brightness", n)
-            cmd = [DIYLight._cmd_down]*10 + [DIYLight._cmd_up]*n
-        elif n>0:
-            print("brighten", self.name, "by", n)
-            cmd = [DIYLight._cmd_up]*n
-        elif n<0:
-            print("dim", self.name, "by", n)
-            cmd = [DIYLight._cmd_down]*(-n)
+        if n[0] == '+':
+            print('brighten', self.name, 'by', n[1:])
+            cmd = [DIYLight._cmd_up]*int(n)
+        elif n[0] == '-':
+            print('dim', self.name, 'by', n[1:])
+            cmd = [DIYLight._cmd_down]*-int(n)
+        else:
+            print('set', self.name, 'brightness to', n)
+            cmd = [DIYLight._cmd_down]*10 + [DIYLight._cmd_up]*int(n)
 
         res = []
         for c in cmd:

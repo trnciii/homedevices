@@ -1,6 +1,6 @@
 import sys, traceback, os
 
-from .home import Home
+from .home import Home, execute_method
 from . import util
 
 def execute(home, cmd):
@@ -33,14 +33,14 @@ def execute(home, cmd):
 
     # device
     elif cmd[0] in home.devices.keys():
-        return home.execute_device(cmd)
+        return execute_method(home.devices[cmd[0]], cmd[1:])
 
     # home
     elif cmd[0] == 'home':
-        return home.execute_home(cmd[1:])
+        return execute_method(home, cmd[1:])
 
     elif cmd[0] in home.executable + home.properties:
-        return home.execute_home(cmd)
+        execute_method(home, cmd)
 
     # fail
     else:

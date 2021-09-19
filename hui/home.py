@@ -7,6 +7,21 @@ from .BotDevices import *
 from .util import *
 
 
+def execute_method(obj, cmd):
+    if not len(cmd)>0:
+        return obj.status()
+
+    if cmd[0] in obj.executable:
+        return exec('obj.'+cmd[0]+'(*cmd[1:])')
+    elif cmd[0] in obj.properties:
+        if len(cmd)>1:
+            return exec('obj.'+cmd[0]+'=cmd[1]')
+        else:
+            return exec('print(obj.'+cmd[0]+')')
+    else:
+        return 'command ' + quate(cmd[0]) + ' not found in' + type(obj).__name__
+
+
 class Home:
 
     executable = [
@@ -23,7 +38,10 @@ class Home:
         'pullDevices_bot'
     ]
 
-    properties = []
+    properties = [
+        'executable',
+        'properties'
+    ]
 
     def __init__(self):
 
@@ -133,7 +151,7 @@ class Home:
         self.fetchDeviceList_bot()
         self.loadDevices_bot()
 
-
+# others
     def debug(self, v):
         if v in ['on', True]:
             print('entering debug mode')
@@ -146,35 +164,6 @@ class Home:
             self._debug = False
             for d in self.devices.values():
                 d.debug = False
-
-
-# actions
-    def execute_home(self, cmd):
-        if not len(cmd)>0:
-            return self.__str__()
-
-        if cmd[0] in self.executable:
-            return exec('self.'+cmd[0]+'(*cmd[1:])')
-        else:
-            return 'command ' + quate(cmd[0]) + ' not found in Home'
-
-
-    def execute_device(self, cmd):
-        device = self.devices[cmd[0]]
-
-        if not len(cmd)>1:
-            return device.status()
-
-
-        if cmd[1] in device.executable:
-            return exec('device.'+cmd[1]+'('+','.join(cmd[2:])+')')
-        elif cmd[1] in device.properties:
-            if len(cmd)>2:
-                return exec('device.'+cmd[1]+'=cmd[2]')
-            else:
-                return exec('print(device.'+cmd[1]+')')
-        else:
-            return 'command ' + quate(cmd[1]) + ' not found in ' + cmd[0]
 
 
     def down(self):
