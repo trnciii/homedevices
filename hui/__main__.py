@@ -1,4 +1,4 @@
-import sys, traceback
+import sys, traceback, os
 
 from .home import Home
 from . import util
@@ -10,6 +10,9 @@ def execute(home, cmd):
         code = " ".join(cmd[1:])
         exec('res='+code, globals(), locals())
         return locals()['res']
+
+    if cmd[0] == 'sh':
+        return os.system(' '.join(cmd[1:]))
 
     elif cmd[0] in ['quit', 'q']:
         exit()
