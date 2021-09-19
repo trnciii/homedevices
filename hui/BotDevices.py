@@ -28,17 +28,6 @@ class BotDevice:
         self.debug = False
 
 
-    def __str__(self):
-        s = 'name : ' + self.name + ', type : ' + self.type
-        if self.isRemote:
-            s += "(remote)"
-
-        s += ", status : " + self.status()
-        s += ', debug : ' + (terminal_red('True') if self.debug else 'False')
-
-        return s
-
-
     def fetchStatus(self):
         url = 'https://api.switch-bot.com/v1.0/devices/'+self.id+'/status'
         headers = {'Authorization' : self.autho}
@@ -58,15 +47,11 @@ class BotDevice:
         return {}
 
     def on(self):
-        if self.post(BotDevice._cmd_on):
-            print(self.status())
-        else:
+        if not self.post(BotDevice._cmd_on):
             print("failed")
 
     def off(self):
-        if self.post(BotDevice._cmd_off):
-            print(self.status())
-        else:
+        if not self.post(BotDevice._cmd_off):
             print("failed")
 
 

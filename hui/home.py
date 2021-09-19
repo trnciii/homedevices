@@ -59,7 +59,7 @@ class Home:
             self.debug(True)
 
 
-    def __str__(self):
+    def status(self):
         w = 1 + max([len(i) for i in self.devices.keys()])
 
         s  = "---- devices ----\n"
