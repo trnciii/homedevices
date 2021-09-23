@@ -1,7 +1,6 @@
 import json
 import os
-import datetime
-import sys
+import threading, time
 
 from .BotDevices import *
 from .util import *
@@ -35,7 +34,9 @@ class Home:
 
         'fetchDeviceList_bot',
         'loadDevices_bot',
-        'pullDevices_bot'
+        'pullDevices_bot',
+
+        'delay'
     ]
 
     properties = [
@@ -55,11 +56,16 @@ class Home:
         self.devices = {}
         self.loadDevices_bot()
 
+        self.queue = []
+
         if self.config['debug_default']:
             self.debug(True)
 
 
     def status(self):
+        return self.status_device() + self.status_queue()
+
+    def status_device(self):
         w = 1 + max([len(i) for i in self.devices.keys()])
 
         s  = "---- devices ----\n"
@@ -70,6 +76,22 @@ class Home:
             s += '\n'
         s += "---- ------- ----\n"
         return s
+
+    def status_queue(self):
+        if len(self.queue) == 0:
+            return 'no queue'
+
+        s = "---- queue ----\n"
+        for q in self.queue:
+            s += json.dumps(q['meta']) + '\n'
+        s += '---- ----- ----\n'
+        return s
+
+    def update(self):
+        self.queue = [q for q in self.queue if q['thread'].is_alive()]
+
+        if len(self.queue) > 0:
+            print(self.status_queue())
 
 
 # config
@@ -150,6 +172,27 @@ class Home:
     def pullDevices_bot(self):
         self.fetchDeviceList_bot()
         self.loadDevices_bot()
+
+
+    def delay(self, t, name, *args):
+
+        obj = self.devices[name]
+        sec = 60*float(t)
+
+        def f():
+            res = execute_method(obj, args)
+            if res:
+                print(res)
+
+        th = threading.Timer(sec, f)
+        th.start()
+        self.queue.append({
+            'thread':th,
+            'meta':{
+                'device':name,
+                'command':args
+            }
+        })
 
 # others
     def debug(self, v):

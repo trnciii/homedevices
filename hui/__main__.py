@@ -1,4 +1,5 @@
-import sys, traceback, os
+import sys, traceback
+import os
 
 from .home import Home, execute_method
 from . import util
@@ -40,7 +41,7 @@ def execute(home, cmd):
         return execute_method(home, cmd[1:])
 
     elif cmd[0] in home.executable + home.properties:
-        execute_method(home, cmd)
+        return execute_method(home, cmd)
 
     # fail
     else:
@@ -49,10 +50,11 @@ def execute(home, cmd):
 
 def run():
     print('running interactive interface')
-
     home = Home()
     while(True):
         try:
+            home.update()
+
             cmd = input('>>> ').split()
             res = execute(home, cmd)
             if res:
@@ -63,6 +65,8 @@ def run():
             print("-"*40)
             traceback.print_exc(file=sys.stdout)
             print("-"*40)
+
+            input('press any key to continue\n')
 
 # main
 if len(sys.argv)>1:

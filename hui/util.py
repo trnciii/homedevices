@@ -1,7 +1,5 @@
 import os
 import shutil
-import time
-import threading
 import urllib.request
 import json
 
@@ -15,7 +13,6 @@ executable = [
     'clean',
     'removeConfig',
     'removeDeviceList',
-    'delay'
 ]
 
 
@@ -35,15 +32,6 @@ def removeDeviceList():
     os.remove(path_devices)
     print("removed", path_devices)
 
-
-def delay(t, f, *args):
-    
-    def ex():
-        time.sleep(60*t)
-        f(*args)
-
-    th = threading.Thread(target=ex)
-    th.start()
 
 def ls(l):
     if isinstance(l, dict):
