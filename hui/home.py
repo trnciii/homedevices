@@ -18,7 +18,7 @@ def execute_method(obj, cmd):
         else:
             return exec('print(obj.'+cmd[0]+')')
     else:
-        return 'command ' + quate(cmd[0]) + ' not found in' + type(obj).__name__
+        return terminal_yellow('command ' + quate(cmd[0]) + ' not found in' + type(obj).__name__)
 
 
 class Home:

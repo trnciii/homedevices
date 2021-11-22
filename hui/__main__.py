@@ -45,7 +45,8 @@ def execute(home, cmd):
 
     # fail
     else:
-        return 'failed to find device or command. use <help> to show commands.'
+        return util.terminal_yellow(
+            'failed to find device or command. use <help> to show commands.')
 
 
 def run():
