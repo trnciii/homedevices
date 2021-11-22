@@ -63,6 +63,7 @@ class AirConditioner(BotDevice):
     executable = BotDevice.executable + [
         'set',
         'cool',
+        'warm',
     ]
 
     properties = BotDevice.properties + [
@@ -123,6 +124,10 @@ class AirConditioner(BotDevice):
         self.mode = "cool"
         return self.set()
 
+    def warm(self, t):
+        self.temperature = t
+        self.mode = 'heat'
+        return self.set()
 
 
 class Plug(BotDevice):
