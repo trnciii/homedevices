@@ -30,7 +30,7 @@ class Home:
 		'saveConfig',
 		'setAutho',
 		'debug_default',
-		'loadConfig'
+		'loadConfig',
 
 		'fetchDeviceList_bot',
 		'loadDevices_bot',
@@ -41,7 +41,8 @@ class Home:
 
 	properties = [
 		'executable',
-		'properties'
+		'properties',
+		'devices',
 	]
 
 	def __init__(self):
