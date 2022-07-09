@@ -31,7 +31,8 @@ def execute(home, cmd):
 
 	# util
 	elif cmd[0] in util.executable:
-		return exec('util.'+cmd[0] + '(*cmd[1:])')
+		exec('ret = util.{}(*cmd[1:])'.format(cmd[0]), globals(), locals())
+		return locals()['ret']
 
 	# device
 	elif cmd[0] in home.devices.keys():
@@ -71,11 +72,11 @@ def interactive():
 
 
 def main():
-	print('running', os.path.dirname(os.path.abspath(__file__)), end=' ')
+	print('running', util.running(), end=' ')
 
 	if len(sys.argv)>1:
-		print('( oneline )')
-		execute(Home(), sys.argv[1:])
+		print('(Oneline)')
+		print(execute(Home(), sys.argv[1:]))
 	else:
-		print('( interactive mode )')
+		print('(Interactive mode)')
 		interactive()

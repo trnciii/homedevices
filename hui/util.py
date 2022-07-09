@@ -13,7 +13,12 @@ executable = [
 	'clean',
 	'removeConfig',
 	'removeDeviceList',
+	'running'
 ]
+
+
+def running():
+	return os.path.dirname(os.path.abspath(__file__))
 
 
 def clean():
