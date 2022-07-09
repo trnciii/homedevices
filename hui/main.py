@@ -10,7 +10,7 @@ def execute(home, cmd):
 
 	if cmd[0] == 'py':
 		code = " ".join(cmd[1:])
-		exec('res='+code, globals(), locals())
+		exec('res={}'.format(code), globals(), locals())
 		return locals()['res']
 
 	if cmd[0] == 'sh':
@@ -18,16 +18,6 @@ def execute(home, cmd):
 
 	elif cmd[0] in ['quit', 'q']:
 		exit()
-
-	elif cmd[0] in ['help', 'h']:
-		s = "Command list:\n\
-		<device name> <method> <args>   execute method\n\
-		\n\
-		clean                           remove all local data (use this before uninstall)\n\
-		quit                            quit application\n\
-		help                            show this message\n\
-		"
-		return s
 
 	# util
 	elif cmd[0] in util.executable:
@@ -47,8 +37,7 @@ def execute(home, cmd):
 
 	# fail
 	else:
-		return util.terminal_yellow(
-			'failed to find device or command. use <help> to show commands.')
+		return util.terminal_yellow('failed to find device or command.')
 
 
 def interactive():
