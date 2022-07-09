@@ -1,6 +1,6 @@
 import json
 import os
-import threading, time
+import threading
 
 from .BotDevices import *
 from .util import *
