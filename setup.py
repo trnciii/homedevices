@@ -8,8 +8,7 @@ setup(
 	license="MIT",
 	entry_points={
 		'console_scripts': [
-			'huii = hui.main:run',
-			'hui  = hui.main:oneliner'
+			'hui  = hui.main:main'
 		]
 	}
 )

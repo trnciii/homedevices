@@ -50,10 +50,7 @@ def execute(home, cmd):
 			'failed to find device or command. use <help> to show commands.')
 
 
-oneliner = lambda: execute(Home(), sys.argv[1:])
-
-def run():
-	print('running interactive interface')
+def interactive():
 	home = Home()
 	while(True):
 		try:
@@ -71,3 +68,14 @@ def run():
 			print("-"*40)
 
 			input('press any key to continue\n')
+
+
+def main():
+	print('running', os.path.dirname(os.path.abspath(__file__)), end=' ')
+
+	if len(sys.argv)>1:
+		print('( oneline )')
+		execute(Home(), sys.argv[1:])
+	else:
+		print('( interactive mode )')
+		interactive()
