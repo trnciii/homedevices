@@ -70,7 +70,11 @@ def run():
 			input('press any key to continue\n')
 
 # main
+
+oneliner = lambda: execute(Home(), sys.argv[1:])
+
 if len(sys.argv)>1:
-	execute(Home(), sys.argv[1:])
+	oneliner()
+	# execute(Home(), sys.argv[1:])
 else:
 	run()
