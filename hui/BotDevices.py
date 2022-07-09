@@ -166,63 +166,33 @@ class Plug(BotDevice):
 class DIYLight(BotDevice):
 	# for my room's only
 
-	_stateNames = ["off", "on", "night"]
-
 	_cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
 	_cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
 	executable = BotDevice.executable + [
-		'night',
 		'mode',
 		'brightness',
 	]
 
-	properties = BotDevice.properties + [
-		'power'
-	]
+	properties = BotDevice.properties
 
 	def __init__(self, autho, deviceId, name):
 		deviceType = "DIY Light"
 		isRemote = True
 		super().__init__(autho, deviceId, name, deviceType, isRemote)
 
-		self.power = 1
-
-		self.on = partial(self.mode, next="on")
-		self.off = partial(self.mode, next="off")
-		self.night = partial(self.mode, next="night")
-
 
 	def status(self):
-		return {'power':self.power}
+		return {}
 
 
-	@property
-	def power(self):
-		return DIYLight._stateNames[self._power]
+	def mode(self, next=1):
+		n = int(next)%3
 
-	@power.setter
-	def power(self, v):
-		self._power = setOption(v, DIYLight._stateNames)
-
-
-	def mode(self, next):
-		n = 0
-
-		if isinstance(next, str) and next in DIYLight._stateNames:
-			n = DIYLight._stateNames.index(next) - self._power
-			n = n%3
-		elif isinstance(next, int):
-			n = next%3
-		else:
-			n = int(next)%3
-
-		print("turn", self.name, "form", self.power, "to", DIYLight._stateNames[(self._power + n)%3])
-
-		if n == 1 and self.post(DIYLight._cmd_on):
-			self._power = (self._power + n)%3
-		elif n == 2 and self.post(DIYLight._cmd_off):
-			self._power = (self._power + n)%3
+		if n == 1:
+			self.post(DIYLight._cmd_on)
+		elif n == 2:
+			self.post(DIYLight._cmd_off)
 
 
 	def brightness(self, n):
