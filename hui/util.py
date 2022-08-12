@@ -2,7 +2,7 @@ import os
 import shutil
 import urllib.request
 import json
-
+from . import terminal as term
 
 path_lib = os.path.dirname(os.path.abspath(__file__))
 path_data = path_lib+"/data"
@@ -49,7 +49,7 @@ def ls(l):
 def request(url, headers, data=None, debug=False):
 
 	if debug:
-		print(terminal_red('debugging request'))
+		print(term.mod('debugging request', [term.color('yellow')]))
 		print('-'*40)
 		print('url :', url)
 		print('headers :', headers)
@@ -64,7 +64,7 @@ def request(url, headers, data=None, debug=False):
 			if body["message"] == "success":
 				return body["body"] if body["body"] else True
 			else:
-				print("ERROR")
+				print(term.mod('ERROR', [term.color('red')]))
 				print("request data:", data)
 				print("response message:", body["message"])
 				print("response body", body["body"])
@@ -104,25 +104,3 @@ def setOption(v, ls):
 
 	v = input("choose option " + toOptions(ls) + " >>")
 	return setOption(int(v) if v.isdigit() else v, ls)
-
-
-def terminal_red(s):
-	return "\033[1;31m" + s + "\033[0m"
-
-def terminal_green(s):
-	return "\033[1;32m" + s + "\033[0m"
-
-def terminal_yellow(s):
-	return "\033[1;33m" + s + "\033[0m"
-
-def terminal_blue(s):
-	return "\033[1;34m" + s + "\033[0m"
-
-def terminal_bold(s):
-	return "\033[1;1m" + s + "\033[0m"
-
-def quate(s):
-	return '\'' + s + '\''
-
-def angle(s):
-	return '<' + s + '>'

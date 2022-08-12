@@ -4,6 +4,7 @@ import threading
 
 from .BotDevices import *
 from .util import *
+from . import terminal as term
 
 
 def execute_method(obj, cmd):
@@ -18,7 +19,7 @@ def execute_method(obj, cmd):
 		else:
 			return exec('print(obj.'+cmd[0]+')')
 	else:
-		return terminal_yellow('command ' + quate(cmd[0]) + ' not found in' + type(obj).__name__)
+		return term.mod(f'command \'{cmd[0]}\' not found in {type(obj).__name__}', [term.color('yellow')])
 
 
 class Home:
@@ -72,7 +73,7 @@ class Home:
 		s  = "---- devices ----\n"
 		for d in self.devices.values():
 			if d.debug:
-				s += terminal_red('DEBUG ')
+				s += term.mod('DEBUG ', [term.color('yellow')])
 			s += d.name.ljust(w) + json.dumps(d.status())
 			s += '\n'
 		s += "---- ------- ----\n"

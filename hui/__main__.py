@@ -2,7 +2,7 @@ import sys, traceback
 import os
 
 from .home import Home, execute_method
-from . import util
+from . import util, terminal as term
 
 
 def execute(home, cmd):
@@ -38,7 +38,7 @@ def execute(home, cmd):
 
 	# fail
 	else:
-		return util.terminal_yellow('failed to find device or command.')
+		return term.mod('failed to find device or command', [term.color('yellow')])
 
 
 def interactive():

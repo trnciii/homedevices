@@ -1,6 +1,5 @@
 from functools import partial
 from .util import request, setOption
-from .util import terminal_red
 
 class BotDevice:
 
