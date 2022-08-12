@@ -47,12 +47,10 @@ class BotDevice:
 		return {}
 
 	def on(self):
-		if not self.post(BotDevice._cmd_on):
-			print("failed")
+		return self.post(BotDevice._cmd_on)
 
 	def off(self):
-		if not self.post(BotDevice._cmd_off):
-			print("failed")
+		return self.post(BotDevice._cmd_off)
 
 
 class AirConditioner(BotDevice):
@@ -116,7 +114,7 @@ class AirConditioner(BotDevice):
 		}
 
 		if self.post(cmd):
-			print(self.status())
+			return self.status()
 
 
 	def cool(self, t):
@@ -198,24 +196,13 @@ class DIYLight(BotDevice):
 	def brightness(self, n):
 
 		if n[0] == '+':
-			print('brighten', self.name, 'by', n[1:])
 			cmd = [DIYLight._cmd_up]*int(n)
 		elif n[0] == '-':
-			print('dim', self.name, 'by', n[1:])
 			cmd = [DIYLight._cmd_down]*-int(n)
 		else:
-			print('set', self.name, 'brightness to', n)
 			cmd = [DIYLight._cmd_down]*10 + [DIYLight._cmd_up]*int(n)
 
-		res = []
-		for c in cmd:
-			res.append(self.post(c))
-
-		if res.count(True) == len(res):
-			print("success")
-		else:
-			print("failed.", res)
-
+		return [self.post(c) for c in cmd]
 
 
 class HubMini(BotDevice):

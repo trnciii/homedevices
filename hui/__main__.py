@@ -14,7 +14,8 @@ def execute(home, cmd):
 		return locals()['res']
 
 	if cmd[0] == 'sh':
-		return os.system(' '.join(cmd[1:]))
+		os.system(' '.join(cmd[1:]))
+		return
 
 	elif cmd[0] in ['quit', 'q']:
 		exit()
@@ -49,9 +50,8 @@ def interactive():
 			home.update()
 
 			cmd = input('>>> ').split()
-			res = execute(home, cmd)
-			if res:
-				print(res)
+			if re := execute(home, cmd):
+				print(re)
 
 		except Exception:
 			print("Exception in user code:")
@@ -64,7 +64,8 @@ def interactive():
 
 def main():
 	if len(sys.argv)>1:
-		print(execute(Home(), sys.argv[1:]))
+		if re := execute(Home(), sys.argv[1:]):
+			print(re)
 	else:
 		print('running', util.running())
 		interactive()
