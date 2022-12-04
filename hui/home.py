@@ -23,13 +23,6 @@ def execute_method(obj, cmd):
 
 
 class Home:
-
-	properties = [
-		'executable',
-		'properties',
-		'devices',
-	]
-
 	def __init__(self):
 
 		if not os.path.exists(path_data):
@@ -59,6 +52,8 @@ class Home:
 
 			'delay': self.delay
 		}
+
+		self.properties = []
 
 		if self.config['debug_default']:
 			self.debug(True)

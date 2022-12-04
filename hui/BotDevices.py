@@ -6,13 +6,6 @@ class BotDevice:
 	_cmd_on = {"commandType":"command", "command":"turnOn", "parameter":"default"}
 	_cmd_off = {"commandType":"command", "command":"turnOff", "parameter":"default"}
 
-	properties = [
-		'debug',
-		'properties',
-		'executable'
-	]
-
-
 	def __init__(self, autho, deviceId, name, deviceType, isRemote):
 		self.id = deviceId
 		self.name = name
@@ -24,8 +17,16 @@ class BotDevice:
 		self.executable = {
 			'on': self.on,
 			'off': self.off,
-			'status': self.status
+
+			'status': self.status,
+
+			'prop': self.prop,
+			'exe': self.exe,
 		}
+
+		self.properties = [
+			'debug',
+		]
 
 	def fetchStatus(self):
 		url = 'https://api.switch-bot.com/v1.0/devices/'+self.id+'/status'
@@ -45,6 +46,13 @@ class BotDevice:
 	def status(self):
 		return {}
 
+	def prop(self):
+		return self.properties
+
+	def exe(self):
+		return self.executable.keys()
+
+
 	def on(self):
 		return self.post(BotDevice._cmd_on)
 
@@ -59,12 +67,6 @@ class AirConditioner(BotDevice):
 
 	_modeNames = ["auto", "cool", "dry", "fan", "heat"]
 	_fanSpeedNames = ["auto", "low", "medium", "high"]
-
-	properties = BotDevice.properties + [
-		'mode',
-		'fan',
-		'temperature'
-	]
 
 	def __init__(self, autho, deviceId, name):
 		deviceType = "Air Conditioner"
@@ -81,6 +83,11 @@ class AirConditioner(BotDevice):
 			'heat': self.heat,
 		}
 
+		self.properties += [
+			'mode',
+			'fan',
+			'temperature'
+		]
 
 	def status(self):
 		return {
@@ -168,8 +175,6 @@ class DIYLight(BotDevice):
 
 	_cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
 	_cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
-
-	properties = BotDevice.properties
 
 	def __init__(self, autho, deviceId, name):
 		deviceType = "DIY Light"
