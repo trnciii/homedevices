@@ -11,8 +11,8 @@ def execute_method(obj, cmd):
 	if not len(cmd)>0:
 		return obj.status()
 
-	if cmd[0] in obj.executable:
-		return exec('obj.'+cmd[0]+'(*cmd[1:])')
+	if cmd[0] in obj.executable.keys():
+		return obj.executable[cmd[0]](*cmd[1:])
 	elif cmd[0] in obj.properties:
 		if len(cmd)>1:
 			return exec('obj.'+cmd[0]+'=cmd[1]')
@@ -23,22 +23,6 @@ def execute_method(obj, cmd):
 
 
 class Home:
-
-	executable = [
-		'debug',
-		'down',
-
-		'saveConfig',
-		'setAutho',
-		'debug_default',
-		'loadConfig',
-
-		'fetchDeviceList_bot',
-		'loadDevices_bot',
-		'pullDevices_bot',
-
-		'delay'
-	]
 
 	properties = [
 		'executable',
@@ -59,6 +43,22 @@ class Home:
 		self.loadDevices_bot()
 
 		self.queue = []
+
+		self.executable = {
+			'debug': self.debug,
+			'down': self.down,
+
+			'saveConfig': self.saveConfig,
+			'setAutho': self.setAutho,
+			'debug_default': self.debug_default,
+			'loadConfig': self.loadConfig,
+
+			'fetchDeviceList_bot': self.fetchDeviceList_bot,
+			'loadDevices_bot': self.loadDevices_bot,
+			'pullDevices_bot': self.pullDevices_bot,
+
+			'delay': self.delay
+		}
 
 		if self.config['debug_default']:
 			self.debug(True)

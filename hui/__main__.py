@@ -21,9 +21,8 @@ def execute(home, cmd):
 		exit()
 
 	# util
-	elif cmd[0] in util.executable:
-		exec('ret = util.{}(*cmd[1:])'.format(cmd[0]), globals(), locals())
-		return locals()['ret']
+	elif cmd[0] in util.executable.keys():
+		return util.executable[cmd[0]](*cmd[1:])
 
 	# device
 	elif cmd[0] in home.devices.keys():
@@ -33,7 +32,7 @@ def execute(home, cmd):
 	elif cmd[0] == 'home':
 		return execute_method(home, cmd[1:])
 
-	elif cmd[0] in home.executable + home.properties:
+	elif cmd[0] in home.executable.keys() | home.properties:
 		return execute_method(home, cmd)
 
 	# fail

@@ -12,11 +12,6 @@ class BotDevice:
 		'executable'
 	]
 
-	executable = [
-		'on',
-		'off',
-		'status'
-	]
 
 	def __init__(self, autho, deviceId, name, deviceType, isRemote):
 		self.id = deviceId
@@ -26,6 +21,11 @@ class BotDevice:
 		self.autho = autho
 		self.debug = False
 
+		self.executable = {
+			'on': self.on,
+			'off': self.off,
+			'status': self.status
+		}
 
 	def fetchStatus(self):
 		url = 'https://api.switch-bot.com/v1.0/devices/'+self.id+'/status'
@@ -52,19 +52,13 @@ class BotDevice:
 		return self.post(BotDevice._cmd_off)
 
 	def completion(self):
-		return {e:None for e in self.executable + self.properties}
+		return {e:None for e in self.executable.keys()}
 
 
 class AirConditioner(BotDevice):
 
 	_modeNames = ["auto", "cool", "dry", "fan", "heat"]
 	_fanSpeedNames = ["auto", "low", "medium", "high"]
-
-	executable = BotDevice.executable + [
-		'set',
-		'cool',
-		'heat',
-	]
 
 	properties = BotDevice.properties + [
 		'mode',
@@ -80,6 +74,12 @@ class AirConditioner(BotDevice):
 		self.temperature = 25
 		self.mode = "cool"
 		self.fan = "auto"
+
+		self.executable |= {
+			'set': self.set,
+			'cool': self.cool,
+			'heat': self.heat,
+		}
 
 
 	def status(self):
@@ -132,14 +132,14 @@ class AirConditioner(BotDevice):
 
 class Plug(BotDevice):
 
-	executable = BotDevice.executable + [
-		'toggle',
-	]
-
 	def __init__(self, autho, deviceId, name):
 		deviceType = "Plug"
 		isRemote = False
 		super().__init__(autho, deviceId, name, deviceType, isRemote)
+
+		self.executable |= {
+			'toggle': self.toggle,
+		}
 
 
 	def status(self):
@@ -169,17 +169,17 @@ class DIYLight(BotDevice):
 	_cmd_up = {"commandType":"command", "command":"brightnessUp", "parameter":"default"}
 	_cmd_down = {"commandType":"command", "command":"brightnessDown", "parameter":"default"}
 
-	executable = BotDevice.executable + [
-		'mode',
-		'brightness',
-	]
-
 	properties = BotDevice.properties
 
 	def __init__(self, autho, deviceId, name):
 		deviceType = "DIY Light"
 		isRemote = True
 		super().__init__(autho, deviceId, name, deviceType, isRemote)
+
+		self.executable |= {
+			'mode': self.mode,
+			'brightness': self.brightness,
+		}
 
 
 	def status(self):
@@ -209,12 +209,11 @@ class DIYLight(BotDevice):
 
 class HubMini(BotDevice):
 
-	executable = []
-
 	def __init__(self, autho, deviceId, name):
 		deviceType = "Hub Mini"
 		isRemote = False
 		super().__init__(autho, deviceId, name, deviceType, isRemote)
+		self.executable = {}
 
 
 	def off(self):pass

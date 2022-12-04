@@ -9,13 +9,6 @@ path_data = path_lib+"/data"
 path_config = path_data+'/config.json'
 path_devices = path_data+"/devices.json"
 
-executable = [
-	'clean',
-	'removeConfig',
-	'removeDeviceList',
-	'running'
-]
-
 
 def running():
 	return os.path.dirname(os.path.abspath(__file__))
@@ -104,3 +97,11 @@ def setOption(v, ls):
 
 	v = input("choose option " + toOptions(ls) + " >>")
 	return setOption(int(v) if v.isdigit() else v, ls)
+
+
+executable = {
+	'clean':clean,
+	'removeConfig':removeConfig,
+	'removeDeviceList': removeDeviceList,
+	'running': running
+}
