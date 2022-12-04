@@ -41,34 +41,37 @@ def execute(home, cmd):
 		return term.mod('failed to find device or command', [term.color('yellow')])
 
 
-def interactive():
-	home = Home()
-	print(home.status())
-
-	while(True):
-		try:
-			home.update()
-
-			cmd = input('>>> ').split()
-			if re := execute(home, cmd):
-				print(re)
-
-		except Exception:
-			print("Exception in user code:")
-			print("-"*40)
-			traceback.print_exc(file=sys.stdout)
-			print("-"*40)
-
-			input('press any key to continue\n')
-
-
 def main():
 	if len(sys.argv)>1:
-		if re := execute(Home(), sys.argv[1:]):
+		if re := execute(home, sys.argv[1:]):
 			print(re)
 	else:
 		print('running', util.running())
-		interactive()
+
+		from .complete import Completer
+		import readline
+
+		home = Home()
+		print(home.status())
+
+		comp = Completer(home.completion())
+
+		readline.parse_and_bind('tab: complete')
+		readline.set_completer(comp.complete)
+
+		while True:
+			try:
+				home.update()
+
+				cmd = input('>>> ').split()
+				if re := execute(home, cmd):
+					print(re)
+
+			except Exception:
+				print("Exception in user code:")
+				print("-"*40)
+				traceback.print_exc(file=sys.stdout)
+				print("-"*40)
 
 
 if __name__ == '__main__':

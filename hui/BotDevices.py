@@ -51,6 +51,9 @@ class BotDevice:
 	def off(self):
 		return self.post(BotDevice._cmd_off)
 
+	def completion(self):
+		return {e:None for e in self.executable + self.properties}
+
 
 class AirConditioner(BotDevice):
 

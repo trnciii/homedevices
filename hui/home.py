@@ -214,3 +214,6 @@ class Home:
 		for d in self.devices.values():
 			d.off()
 			print()
+
+	def completion(self):
+		return {k:v.completion() for k, v in self.devices.items()}
