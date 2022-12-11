@@ -26,7 +26,8 @@ def execute(home, cmd):
 
 	# device
 	elif cmd[0] in home.devices.keys():
-		return execute_method(home.devices[cmd[0]], cmd[1:])
+		if execute_method(home.devices[cmd[0]], cmd[1:]):
+			print(home.devices[cmd[0]].status())
 
 	# home
 	elif cmd[0] == 'home':

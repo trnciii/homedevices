@@ -122,8 +122,7 @@ class AirConditioner(BotDevice):
 			"commandType":"command"
 		}
 
-		if self.post(cmd):
-			return self.status()
+		return self.post(cmd)
 
 
 	def cool(self, t):
@@ -209,7 +208,7 @@ class DIYLight(BotDevice):
 		else:
 			cmd = [DIYLight._cmd_down]*10 + [DIYLight._cmd_up]*int(n)
 
-		return [self.post(c) for c in cmd]
+		return all(self.post(c) for c in cmd)
 
 
 class HubMini(BotDevice):
