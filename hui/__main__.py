@@ -67,7 +67,14 @@ def main():
 				if re := execute(home, cmd):
 					print(re)
 
-			except Exception:
+			except KeyboardInterrupt:
+				print()
+
+			except EOFError:
+				print()
+				break
+
+			except Exception as e:
 				print("Exception in user code:")
 				print("-"*40)
 				traceback.print_exc(file=sys.stdout)
