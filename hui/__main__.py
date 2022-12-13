@@ -42,14 +42,17 @@ def execute(home, cmd):
 
 
 def main():
+
 	if len(sys.argv)>1:
+		home = Home()
 		if re := execute(home, sys.argv[1:]):
 			print(re)
-	else:
-		print('running', util.running())
 
+	else:
 		from .complete import Completer
 		import readline
+
+		print('running', util.running())
 
 		home = Home()
 		print(home.status())
