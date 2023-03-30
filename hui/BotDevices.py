@@ -60,7 +60,7 @@ class BotDevice:
 		return self.post(BotDevice._cmd_off)
 
 	def completion(self):
-		return {e:None for e in self.executable.keys()}
+		return {e:None for e in self.executable.keys() | self.properties}
 
 
 class AirConditioner(BotDevice):
