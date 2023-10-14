@@ -1,0 +1,19 @@
+[build-system]
+requires = ['setuptools', 'setuptools-scm']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'hui'
+dynamic = ['version']
+
+[tool.setuptools]
+packages = ['hui']
+
+[project.scripts]
+hui = 'hui.__main__:main'
+
+[tool.setuptools.dynamic]
+version = {attr = 'hui.__version__.version'}
+
+[tool.setuptools_scm]
+write_to = 'hui/__version__.py'
