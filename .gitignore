@@ -3,3 +3,4 @@ hui/data
 diff
 build
 *.egg-info
+hui/__version__.py
