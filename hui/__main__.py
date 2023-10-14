@@ -57,7 +57,7 @@ def main():
 		home = Home()
 		print(home.status())
 
-		comp = Completer(home.completion())
+		comp = Completer()
 
 		readline.parse_and_bind('tab: complete')
 		readline.set_completer(comp.complete)

@@ -1,8 +1,8 @@
 import readline
+from . import home
 
 class Completer:
-	def __init__(self, tree):
-		self.tree = tree
+	def __init__(self):
 		self.cur = None
 
 	def complete(self, cur, index):
@@ -12,7 +12,7 @@ class Completer:
 		else:
 			buffer = buffer.split()[:-1]
 
-		tree = self.tree
+		tree = home.Home().completion()
 		for w in buffer:
 			tree = tree.get(w, None)
 
