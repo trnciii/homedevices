@@ -1,8 +1,8 @@
 import readline
+from . import home
 
 class Completer:
-	def __init__(self, tree):
-		self.tree = tree
+	def __init__(self):
 		self.cur = None
 
 	def complete(self, cur, index):
@@ -12,7 +12,7 @@ class Completer:
 		else:
 			buffer = buffer.split()[:-1]
 
-		tree = self.tree
+		tree = home.Home().completion()
 		for w in buffer:
 			tree = tree.get(w, None)
 
@@ -22,7 +22,7 @@ class Completer:
 		if cur != self.cur:
 			# we have a new prefix!
 			# find all words that start with this prefix
-			self.matching_words = [w for w in tree.keys() if w.startswith(cur)]
+			self.matching_words = sorted(w for w in tree.keys() if w.startswith(cur))
 			self.cur = cur
 		try:
 			return self.matching_words[index] + ' '

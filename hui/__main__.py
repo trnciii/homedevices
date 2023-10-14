@@ -17,6 +17,36 @@ def execute(home, cmd):
 		os.system(' '.join(cmd[1:]))
 		return
 
+	if cmd[0] == 'completion':
+		return '''_hui(){
+  local cur prev words cword split
+  if declare -F _init_completion >/dev/null 2>&1; then
+    _init_completion -n :/ || return
+  else
+    COMPREPLY=()
+    _get_comp_words_by_ref -n :/ cur prev words cword || return
+  fi
+
+  case $cword in
+    1)
+      COMPREPLY=( $(compgen -W "$(hui complete)" -- "$cur" ) )
+      ;;
+    2)
+      COMPREPLY=( $(compgen -W "$(hui complete ${words[1]})" -- "$cur") )
+      ;;
+	esac
+}
+
+complete -F _hui hui
+'''
+
+	if cmd[0] == 'complete':
+		if len(cmd) == 1:
+			print(' '.join(home.devices.keys() | home.executable.keys() | util.executable.keys() ))
+		elif device := home.devices.get(cmd[1], None):
+			print(' '.join(device.executable.keys()))
+		return
+
 	elif cmd[0] in ['quit', 'q']:
 		exit()
 
@@ -57,7 +87,7 @@ def main():
 		home = Home()
 		print(home.status())
 
-		comp = Completer(home.completion())
+		comp = Completer()
 
 		readline.parse_and_bind('tab: complete')
 		readline.set_completer(comp.complete)
