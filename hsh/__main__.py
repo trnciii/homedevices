@@ -18,7 +18,7 @@ def execute(home, cmd):
 		return
 
 	if cmd[0] == 'completion':
-		return '''_hui(){
+		return '''_hsh(){
   local cur prev words cword split
   if declare -F _init_completion >/dev/null 2>&1; then
     _init_completion -n :/ || return
@@ -29,15 +29,15 @@ def execute(home, cmd):
 
   case $cword in
     1)
-      COMPREPLY=( $(compgen -W "$(hui complete)" -- "$cur" ) )
+      COMPREPLY=( $(compgen -W "$(hsh complete)" -- "$cur" ) )
       ;;
     2)
-      COMPREPLY=( $(compgen -W "$(hui complete ${words[1]})" -- "$cur") )
+      COMPREPLY=( $(compgen -W "$(hsh complete ${words[1]})" -- "$cur") )
       ;;
 	esac
 }
 
-complete -F _hui hui
+complete -F _hsh hsh
 '''
 
 	if cmd[0] == 'complete':

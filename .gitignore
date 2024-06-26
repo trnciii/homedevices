@@ -1,6 +1,6 @@
 *__pycache__
-hui/data
+hsh/data
 diff
 build
 *.egg-info
-hui/__version__.py
+hsh/__version__.py
